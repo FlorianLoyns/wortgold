@@ -9,10 +9,83 @@
       <stop offset="0%"   stop-color="#fff7d4" stop-opacity="0.35"/>
       <stop offset="60%"  stop-color="#fff7d4" stop-opacity="0"/>
     </radialGradient>
+    <linearGradient id="sand" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#fff2b3"/>
+      <stop offset="55%"  stop-color="#f5c542"/>
+      <stop offset="100%" stop-color="#a16207"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.06"/>
+    </linearGradient>
+    <clipPath id="bowtie">
+      <path d="M 152 114
+               L 360 114
+               C 360 220, 286 232, 256 256
+               C 286 280, 360 292, 360 398
+               L 152 398
+               C 152 292, 226 280, 256 256
+               C 226 232, 152 220, 152 114 Z"/>
+    </clipPath>
   </defs>
+
+  <!-- Background tile -->
   <rect width="512" height="512" rx="96" fill="url(#bg)"/>
   <rect width="512" height="512" rx="96" fill="url(#glow)"/>
-  <g transform="translate(52.33 389.67) scale(0.2041 -0.2041)">
-    <path d="M1731 1262 1135 -31H1072L926 867L508 -31H443L248 1262L135 1288L144 1341H611L602 1288L441 1262L581 326L1007 1247H1053L1204 324L1623 1262L1458 1288L1467 1341H1861L1852 1288Z" fill="#fdfbf7"/>
+
+  <!-- Glass body -->
+  <path d="M 152 114
+           L 360 114
+           C 360 220, 286 232, 256 256
+           C 286 280, 360 292, 360 398
+           L 152 398
+           C 152 292, 226 280, 256 256
+           C 226 232, 152 220, 152 114 Z"
+        fill="url(#glass)"/>
+
+  <!-- Sand contents (clipped to glass shape) -->
+  <g clip-path="url(#bowtie)">
+    <!-- Heap in the lower bulb -->
+    <path d="M 152 398
+             L 360 398
+             C 360 360, 310 332, 256 332
+             C 202 332, 152 360, 152 398 Z"
+          fill="url(#sand)"/>
+    <!-- Highlight glint on the heap -->
+    <path d="M 200 350 C 220 338, 292 338, 312 350"
+          stroke="#fff2b3" stroke-width="4" stroke-linecap="round"
+          fill="none" opacity="0.75"/>
+    <!-- Last grains hugging the neck in the upper bulb -->
+    <path d="M 220 244
+             C 232 252, 280 252, 292 244
+             C 282 256, 270 258, 256 258
+             C 242 258, 230 256, 220 244 Z"
+          fill="url(#sand)"/>
+    <!-- Falling stream -->
+    <rect x="252" y="252" width="8" height="92" rx="2" fill="url(#sand)"/>
+  </g>
+
+  <!-- Glass outline on top for crisp edges -->
+  <path d="M 152 114
+           L 360 114
+           C 360 220, 286 232, 256 256
+           C 286 280, 360 292, 360 398
+           L 152 398
+           C 152 292, 226 280, 256 256
+           C 226 232, 152 220, 152 114 Z"
+        fill="none" stroke="#fdfbf7" stroke-width="9" stroke-linejoin="round"/>
+
+  <!-- Frame caps -->
+  <rect x="116" y="86"  width="280" height="28" rx="8" fill="#fdfbf7"/>
+  <rect x="116" y="398" width="280" height="28" rx="8" fill="#fdfbf7"/>
+
+  <!-- Sparkles around the hourglass -->
+  <g fill="#fff7d4">
+    <circle cx="86"  cy="172" r="6"/>
+    <circle cx="424" cy="208" r="4"/>
+    <circle cx="78"  cy="344" r="4"/>
+    <circle cx="432" cy="356" r="6"/>
+    <circle cx="64"  cy="256" r="3"/>
+    <circle cx="448" cy="256" r="3"/>
   </g>
 </svg>

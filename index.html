@@ -168,6 +168,47 @@
     #screen-home.active { gap: 12px; }
     #screen-home .footer { margin-top: 0; }
 
+    /* ---------- Daily goal (slim bar) ---------- */
+    .goal-slim {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 12px 10px;
+      display: flex; flex-direction: column;
+      gap: 5px;
+    }
+    .goal-slim-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .goal-slim-label {
+      font-size: 11px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .05em;
+      font-weight: 600;
+    }
+    .goal-slim-progress {
+      font-size: 13px; font-weight: 700; color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.01em;
+    }
+    .goal-slim-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .goal-slim-fill {
+      height: 100%;
+      width: 0;
+      background: var(--gold-gradient);
+      border-radius: 999px;
+      transition: width .5s cubic-bezier(.4,.2,.2,1);
+    }
+    .goal-slim.complete .goal-slim-progress {
+      background: var(--gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent;
+    }
+
     /* ---------- HOME ---------- */
     .topbar {
       display: flex;
@@ -945,35 +986,6 @@
       100% { transform: translateX(-50%) translateY(0) scale(1); }
     }
 
-    /* ---------- Daily goal ring (home) ---------- */
-    .goal-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px 14px;
-      display: flex; align-items: center; gap: 14px;
-    }
-    .goal-ring { flex-shrink: 0; }
-    .goal-ring-fill { transition: stroke-dashoffset .5s cubic-bezier(.4,.2,.2,1); }
-    .goal-text { flex: 1; min-width: 0; }
-    .goal-title {
-      font-size: 11px; color: var(--muted);
-      text-transform: uppercase; letter-spacing: .05em;
-      font-weight: 600;
-    }
-    .goal-progress {
-      font-size: 18px; font-weight: 700; color: var(--ink);
-      font-variant-numeric: tabular-nums;
-      letter-spacing: -.01em;
-      margin-top: 2px;
-    }
-    .goal-hint { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .goal-card.complete .goal-hint {
-      background: var(--gold-gradient);
-      -webkit-background-clip: text; background-clip: text;
-      color: transparent;
-      font-weight: 700;
-    }
   </style>
 </head>
 <body>
@@ -983,7 +995,15 @@
     <section id="screen-home" class="screen active">
       <div class="topbar">
         <div class="brand">
-          <div class="brand-mark">W</div>
+          <div class="brand-mark" aria-label="Wortgold-Logo">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="5" y="1.6" width="14" height="1.4" rx="0.4" fill="#fdfbf7"/>
+              <rect x="5" y="21" width="14" height="1.4" rx="0.4" fill="#fdfbf7"/>
+              <path d="M 6 3 L 18 3 C 18 6, 17 9.5, 12 12 C 17 14.5, 18 18, 18 21 L 6 21 C 6 18, 7 14.5, 12 12 C 7 9.5, 6 6, 6 3 Z" stroke="#fdfbf7" stroke-width="0.6" stroke-linejoin="round" fill="rgba(255,255,255,0.08)"/>
+              <path d="M 6.5 21 L 17.5 21 C 17.5 18.4, 15 17.2, 12 17.2 C 9 17.2, 6.5 18.4, 6.5 21 Z" fill="#f5c542"/>
+              <rect x="11.7" y="12.2" width="0.6" height="4.6" fill="#f5c542"/>
+            </svg>
+          </div>
           <div>
             <div class="brand-name">Wortgold</div>
             <div class="brand-sub" id="brand-sub-text">Englisch → Deutsch</div>
@@ -1034,27 +1054,12 @@
         </div>
       </div>
 
-      <div class="goal-card" id="goal-card">
-        <svg class="goal-ring" viewBox="0 0 80 80" width="56" height="56">
-          <defs>
-            <linearGradient id="goalGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%"   stop-color="#b8862b"/>
-              <stop offset="50%"  stop-color="#d9a93a"/>
-              <stop offset="100%" stop-color="#b8862b"/>
-            </linearGradient>
-          </defs>
-          <circle cx="40" cy="40" r="34" fill="none" stroke="var(--border)" stroke-width="8"/>
-          <circle id="goal-ring-fill" class="goal-ring-fill"
-                  cx="40" cy="40" r="34" fill="none"
-                  stroke="url(#goalGrad)" stroke-width="8" stroke-linecap="round"
-                  stroke-dasharray="213.6" stroke-dashoffset="213.6"
-                  transform="rotate(-90 40 40)"/>
-        </svg>
-        <div class="goal-text">
-          <div class="goal-title">Tagesziel</div>
-          <div class="goal-progress" id="goal-progress">0 / 20 heute</div>
-          <div class="goal-hint" id="goal-hint">Noch 20 Karten bis zur Tagesfanfare</div>
+      <div class="goal-slim" id="goal-card">
+        <div class="goal-slim-row">
+          <span class="goal-slim-label">Tagesziel</span>
+          <span class="goal-slim-progress" id="goal-progress">0 / 20</span>
         </div>
+        <div class="goal-slim-bar"><div class="goal-slim-fill" id="goal-fill"></div></div>
       </div>
 
       <div class="heat-card" id="heat-card">
@@ -1196,8 +1201,8 @@
 
     <div class="sheet-row">
       <div>
-        <label>Tägliches Pensum</label>
-        <div class="desc">Wie viele Karten pro Session</div>
+        <label>Karten pro Session</label>
+        <div class="desc">Wie viele Karten pro Lerneinheit</div>
       </div>
       <div class="chip-row" id="chip-limit">
         <button class="chip" data-limit="10">10</button>
@@ -2595,9 +2600,9 @@ yourself;dich selbst;pron.;A1;
     const boxes = countByBox();
     const li = levelInfo(state.stats.xp || 0);
 
-    // Show direction in the brand sub
+    // Show direction + active level in the brand sub
     const brandSub = document.getElementById("brand-sub-text");
-    if (brandSub) brandSub.textContent = directionLabel(state.settings.direction || "la-de");
+    if (brandSub) brandSub.textContent = brandSubText();
 
     document.getElementById("level-name").textContent = li.name;
     if (li.nextName) {
@@ -2642,28 +2647,20 @@ yourself;dich selbst;pron.;A1;
 
     // Heatmap der letzten 30 Tage
     renderHeatmap();
-    renderGoalRing();
+    renderGoal();
   }
 
-  // ---- Daily goal ring ----
-  function renderGoalRing() {
+  // ---- Daily goal (slim bar) ----
+  function renderGoal() {
     const goal = state.settings.dailyLimit || 20;
     const today = (state.stats && state.stats.history && state.stats.history[todayKey()]) || 0;
     const progress = Math.min(today / goal, 1);
-    const C = 213.6; // 2*pi*r where r=34
-    const fill = document.getElementById("goal-ring-fill");
+    const fill = document.getElementById("goal-fill");
     const txt  = document.getElementById("goal-progress");
-    const hint = document.getElementById("goal-hint");
     const card = document.getElementById("goal-card");
-    if (fill) fill.setAttribute("stroke-dashoffset", C * (1 - progress));
-    if (txt)  txt.textContent = today + " / " + goal + " heute";
-    if (today >= goal) {
-      if (hint) hint.textContent = "Tagesziel geknackt — Goldgriff! 🎉";
-      if (card) card.classList.add("complete");
-    } else {
-      if (hint) hint.textContent = (goal - today) + " Karten bis zur Tagesfanfare";
-      if (card) card.classList.remove("complete");
-    }
+    if (fill) fill.style.width = (progress * 100) + "%";
+    if (txt)  txt.textContent = today + " / " + goal;
+    if (card) card.classList.toggle("complete", today >= goal);
   }
 
   // ---- Session state ----
@@ -3073,7 +3070,7 @@ yourself;dich selbst;pron.;A1;
       saveState(); refreshSettingsChips();
       // Live-update brand-sub on home screen
       const brandSub = document.getElementById("brand-sub-text");
-      if (brandSub) brandSub.textContent = directionLabel(state.settings.direction);
+      if (brandSub) brandSub.textContent = brandSubText();
     });
   });
   // Niveau-Filter (Multi-Select): Klick toggelt das Niveau in/aus den aktiven
@@ -3097,6 +3094,20 @@ yourself;dich selbst;pron.;A1;
     if (d === "de-la") return "Deutsch → Englisch";
     if (d === "mixed") return "English ↔ Deutsch";
     return "Englisch → Deutsch";
+  }
+  function levelLabel(levels) {
+    const order = ["A1","A2","B1","B2","C1"];
+    const sorted = order.filter(l => (levels || []).includes(l));
+    if (sorted.length === 0) return "";
+    if (sorted.length === 1) return sorted[0];
+    const idxs = sorted.map(l => order.indexOf(l));
+    const consecutive = idxs.every((v, i) => i === 0 || v === idxs[i-1] + 1);
+    return consecutive ? sorted[0] + "–" + sorted[sorted.length - 1] : sorted.join(", ");
+  }
+  function brandSubText() {
+    const dir = directionLabel(state.settings.direction || "la-de");
+    const lv  = levelLabel(state.settings.levels);
+    return lv ? dir + " · " + lv : dir;
   }
   document.getElementById("toggle-sound").addEventListener("click", () => {
     state.settings.sound = !state.settings.sound;
