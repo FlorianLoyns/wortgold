@@ -1,0 +1,3144 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#faf6ee">
+
+  <title>Wortgold</title>
+  <meta name="description" content="Wortgold — Englisch-Vokabeltrainer. Karteibox mit Leitner-System, CEFR-Niveau A1 bis C1.">
+  <link rel="canonical" href="https://florianloyns.github.io/wortgold/">
+  <meta name="robots" content="index,follow">
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Wortgold">
+  <meta name="robots" content="noindex,nofollow">
+
+  <style>
+    /* === Wortgold theme (Pergament + Gold) === */
+    :root {
+      /* Brand */
+      --primary:   #b8862b;        /* tiefes Gold */
+      --primary-2: #d9a93a;        /* helles Gold */
+      --secondary: #2a4a52;        /* tiefes Petrol als Kontrast */
+      --gold-gradient: linear-gradient(135deg, #b8862b 0%, #d9a93a 60%, #b8862b 100%);
+
+      /* Compat aliases for legacy code paths */
+      --teal: var(--primary);
+      --teal-dark: #8d6520;
+      --teal-soft: #f4e8c8;
+      --teal-light: #fbf3df;
+
+      /* Surfaces — Pergament */
+      --bg:      #faf6ee;
+      --bg2:     #f2ead6;
+      --card:    #ffffff;
+      --ink:     #1f1611;        /* warmer Schwarzbraun */
+      --body:    #3d2f20;
+      --muted:   #8b7d63;
+      --border:  #e8dfc9;
+      --paper:   #ffffff;
+      --paper-edge: #e8dfc9;
+      --paper-line: rgba(184, 134, 43, .06);
+      --heat-empty: #f0e8d2;
+      --shadow-card: 0 1px 0 rgba(0,0,0,.02), 0 10px 24px rgba(184, 134, 43, .15), inset 0 0 0 1px rgba(255,255,255,.6);
+
+      /* Status */
+      --ok:        #2f6f57;       /* moosgrün — gemeistert */
+      --ok-soft:   #ddeed5;
+      --warn:      #b1432e;       /* terracotta — falsch */
+      --warn-soft: #f4dcd2;
+      --warm:      #b8862b;       /* gold — unsicher */
+      --warm-soft: #f4e8c8;
+      --gold:      #b8862b;
+
+      /* Box dots — von Anfänger zu Meister im Wortgold-Spektrum */
+      --b1: #b1432e;
+      --b2: #c97a35;
+      --b3: #b8862b;
+      --b4: #6a8b5a;
+      --b5: #2f6f57;
+    }
+
+    /* === Wortgold — Dark variant (Holzkohle + Gold) === */
+    @media (prefers-color-scheme: dark) {
+      html:not(.light) {
+        --bg:      #1a140d;
+        --bg2:     #221a10;
+        --card:    #261d12;
+        --ink:     #f4e8c8;
+        --body:    #d6c79c;
+        --muted:   #8c7d5c;
+        --border:  #3d2f1c;
+        --paper:   #2a2014;
+        --paper-edge: #3d2f1c;
+        --paper-line: rgba(216, 175, 75, .07);
+        --heat-empty: #2a2014;
+        --teal-soft:  #3d2f1c;
+        --teal-light: #221a10;
+        --ok-soft:    #1f3328;
+        --warn-soft:  #3a1d14;
+        --warm-soft:  #3d2f1c;
+        --shadow-card: 0 1px 0 rgba(0,0,0,.4), 0 12px 28px rgba(0,0,0,.5), inset 0 0 0 1px rgba(216, 175, 75, .06);
+      }
+    }
+    html.dark {
+      --bg:      #1a140d;
+      --bg2:     #221a10;
+      --card:    #261d12;
+      --ink:     #f4e8c8;
+      --body:    #d6c79c;
+      --muted:   #8c7d5c;
+      --border:  #3d2f1c;
+      --paper:   #2a2014;
+      --paper-edge: #3d2f1c;
+      --paper-line: rgba(216, 175, 75, .07);
+      --heat-empty: #2a2014;
+      --teal-soft:  #3d2f1c;
+      --teal-light: #221a10;
+      --ok-soft:    #1f3328;
+      --warn-soft:  #3a1d14;
+      --warm-soft:  #3d2f1c;
+      --shadow-card: 0 1px 0 rgba(0,0,0,.4), 0 12px 28px rgba(0,0,0,.5), inset 0 0 0 1px rgba(216, 175, 75, .06);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--body);
+      font-size: 15px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      touch-action: manipulation;
+      overscroll-behavior: none;
+    }
+    button { font: inherit; color: inherit; cursor: pointer; }
+
+    @keyframes slide-up {
+      from { transform: translateY(20px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50%      { transform: scale(1.03); }
+    }
+    @keyframes flip-in {
+      from { transform: rotateY(180deg); }
+      to   { transform: rotateY(0); }
+    }
+    @keyframes float-up {
+      0%   { transform: translate(-50%, 0) scale(0.6); opacity: 0; }
+      20%  { opacity: 1; }
+      100% { transform: translate(-50%, -90px) scale(1.2); opacity: 0; }
+    }
+    @keyframes confetti {
+      0%   { transform: translateY(-20px) rotate(0); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25%      { transform: translateX(-5px); }
+      75%      { transform: translateX(5px); }
+    }
+
+    .app {
+      max-width: 560px;
+      margin: 0 auto;
+      min-height: 100vh;
+      min-height: 100dvh;
+      padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen { display: none; flex: 1; flex-direction: column; }
+    .screen.active { display: flex; animation: slide-up .25s ease-out; }
+
+    /* Home screen: even gap between cards, button sits at the bottom with the same gap */
+    #screen-home.active { gap: 12px; }
+    #screen-home .footer { margin-top: 0; }
+
+    /* ---------- HOME ---------- */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0 8px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-mark {
+      width: 36px; height: 36px;
+      border-radius: 9px;
+      background: var(--gold-gradient);
+      color: white;
+      display: grid; place-items: center;
+      font-weight: 800;
+      font-size: 18px;
+      box-shadow: 0 4px 14px rgba(184, 134, 43, .45);
+    }
+    .brand-name {
+      font-weight: 700; color: var(--ink); font-size: 17px;
+      letter-spacing: -.01em;
+    }
+    .brand-sub {
+      font-size: 12px; color: var(--muted); margin-top: 1px;
+    }
+    .icon-btn {
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      display: grid; place-items: center;
+      color: var(--body);
+    }
+    .icon-btn:active { background: var(--teal-light); }
+
+    .level-card {
+      background: linear-gradient(135deg, var(--primary-2, var(--primary)), var(--teal-dark));
+      color: white;
+      border-radius: 18px;
+      padding: 18px;
+      margin-top: 6px;
+      box-shadow: 0 8px 28px rgba(184, 134, 43, .25);
+    }
+    .level-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      margin-bottom: 10px;
+    }
+    .level-name { font-size: 16px; font-weight: 700; letter-spacing: -.01em; }
+    .level-xp { font-size: 12px; opacity: .85; font-variant-numeric: tabular-nums; }
+    .progress {
+      height: 8px; background: rgba(255,255,255,.18);
+      border-radius: 999px; overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%; background: white; border-radius: 999px;
+      transition: width .5s ease;
+    }
+    .level-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 10px;
+      font-size: 12px; opacity: .85;
+    }
+    .streak {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(255,255,255,.18);
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 22px; font-weight: 700; color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.02em;
+    }
+    .stat-label {
+      font-size: 11px; color: var(--muted); margin-top: 2px;
+      text-transform: uppercase; letter-spacing: .04em;
+    }
+
+    .boxes-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .boxes-title {
+      font-size: 12px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .05em;
+      margin-bottom: 10px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .boxes-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    .box {
+      text-align: center;
+      padding: 10px 4px;
+      border-radius: 10px;
+      background: var(--bg2);
+      position: relative;
+    }
+    .box-num { font-size: 11px; color: var(--muted); font-weight: 600; }
+    .box-count {
+      font-size: 20px; font-weight: 700; color: var(--ink);
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+    .box-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      position: absolute; top: 6px; right: 8px;
+    }
+    .box-1 .box-dot { background: var(--b1); }
+    .box-2 .box-dot { background: var(--b2); }
+    .box-3 .box-dot { background: var(--b3); }
+    .box-4 .box-dot { background: var(--b4); }
+    .box-5 .box-dot { background: var(--b5); }
+
+    .start-btn {
+      margin-top: auto;
+      background: var(--gold-gradient);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      padding: 18px;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      box-shadow: 0 8px 28px rgba(184, 134, 43, .45);
+      transition: transform .1s, box-shadow .2s;
+    }
+    .start-btn:hover { box-shadow: 0 10px 36px rgba(184, 134, 43, .6); }
+    .start-btn:active { transform: scale(.98); }
+    .start-btn:disabled {
+      background: var(--muted);
+      box-shadow: none;
+    }
+    .start-btn-sub {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      opacity: .8;
+      margin-top: 2px;
+    }
+
+    .welcome-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px 16px;
+    }
+    .welcome-eyebrow {
+      font-size: 11px;
+      color: var(--teal);
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .welcome-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -.01em;
+      margin-bottom: 8px;
+    }
+    .welcome-text {
+      font-size: 14px;
+      color: var(--body);
+      line-height: 1.55;
+    }
+    .welcome-text strong { color: var(--ink); font-weight: 600; }
+    .welcome-list {
+      margin: 12px 0 2px;
+      padding: 0;
+      list-style: none;
+    }
+    .welcome-list li {
+      font-size: 13px;
+      color: var(--muted);
+      padding: 5px 0 5px 22px;
+      position: relative;
+    }
+    .welcome-list li::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 50%;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+      transform: translateY(-50%);
+    }
+
+    .heat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .heat-title {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 12px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .05em;
+      margin-bottom: 10px;
+    }
+    .heat-title .heat-meta {
+      text-transform: none; letter-spacing: 0; color: var(--muted); font-weight: 500;
+    }
+    .heat-grid {
+      display: grid;
+      grid-template-columns: repeat(15, 1fr);
+      gap: 4px;
+    }
+    .heat-cell {
+      aspect-ratio: 1 / 1;
+      border-radius: 3px;
+      background: var(--heat-empty);
+      transition: transform .12s;
+    }
+    .heat-cell.today { outline: 2px solid var(--teal); outline-offset: 1px; }
+    .heat-summary {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 10px;
+      font-size: 12px; color: var(--body);
+    }
+    .heat-pill {
+      background: var(--warm-soft);
+      color: var(--warm);
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: 11px; font-weight: 600;
+    }
+
+    /* ---------- REVIEW ---------- */
+    .review-top {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 0;
+    }
+    .review-progress {
+      flex: 1;
+      height: 6px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .review-progress-bar {
+      height: 100%;
+      background: var(--teal);
+      transition: width .3s;
+    }
+    .review-counter {
+      font-size: 12px; color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      min-width: 38px; text-align: center;
+    }
+
+    .card-stage {
+      flex: 1;
+      display: flex; align-items: center; justify-content: center;
+      perspective: 1200px;
+      padding: 8px 0 16px;
+    }
+    .flashcard {
+      width: 100%;
+      max-width: 460px;
+      aspect-ratio: 5 / 7;
+      max-height: calc(100vh - 280px);
+      max-height: calc(100dvh - 280px);
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform .55s cubic-bezier(.4, .2, .2, 1);
+      cursor: pointer;
+    }
+    .flashcard.flipped { transform: rotateY(180deg); }
+    .flashcard.shake { animation: shake .3s; }
+
+    .face {
+      position: absolute; inset: 0;
+      border-radius: 22px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: var(--paper);
+      border: 1px solid var(--paper-edge);
+      box-shadow: var(--shadow-card);
+      background-image:
+        repeating-linear-gradient(
+          to bottom,
+          transparent 0,
+          transparent 31px,
+          var(--paper-line) 31px,
+          var(--paper-line) 32px
+        );
+    }
+    .face.front {}
+    .face.back { transform: rotateY(180deg); }
+
+    .card-meta-top {
+      position: absolute; top: 16px; left: 20px;
+      font-size: 11px; color: var(--muted);
+      letter-spacing: .05em; text-transform: uppercase;
+      font-weight: 600;
+    }
+    .card-meta-right {
+      position: absolute; top: 16px; right: 20px;
+      font-size: 11px; color: var(--muted);
+      font-weight: 600;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .card-meta-right .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+    }
+    .term {
+      font-family: "Iowan Old Style", "Palatino", "Palatino Linotype", Georgia, serif;
+      font-style: italic;
+      font-size: clamp(28px, 7vw, 42px);
+      font-weight: 600;
+      color: var(--ink);
+      letter-spacing: -.01em;
+      line-height: 1.15;
+      max-width: 100%;
+      word-break: break-word;
+      hyphens: auto;
+    }
+    .pos-badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: var(--teal-soft);
+      color: var(--primary);
+      font-family: "Inter", -apple-system, sans-serif;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .level-badge {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--bg2);
+      color: var(--body);
+      font-family: "Inter", -apple-system, sans-serif;
+      font-style: normal;
+      font-weight: 700;
+      font-size: 10px;
+      letter-spacing: .08em;
+    }
+    .term-back {
+      font-family: "Iowan Old Style", "Palatino", "Palatino Linotype", Georgia, serif;
+      font-style: italic;
+      font-size: clamp(15px, 3.6vw, 18px);
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .definition {
+      font-size: clamp(22px, 5.5vw, 30px);
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.25;
+      letter-spacing: -.01em;
+    }
+    .flip-hint {
+      position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+      font-size: 11px; color: var(--muted);
+      letter-spacing: .05em; text-transform: uppercase;
+      font-weight: 600;
+      display: inline-flex; align-items: center; gap: 6px;
+      opacity: .7;
+    }
+    .flip-hint svg { width: 12px; height: 12px; }
+
+    .rate-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      padding: 0 0 16px;
+    }
+    .rate-row.disabled { opacity: .35; pointer-events: none; }
+    .rate-btn {
+      border: none;
+      border-radius: 14px;
+      padding: 14px 8px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      display: flex; flex-direction: column; align-items: center; gap: 2px;
+      transition: transform .1s;
+    }
+    .rate-btn:active { transform: scale(.96); }
+    .rate-btn .rate-sub {
+      font-size: 10px;
+      font-weight: 500;
+      opacity: .7;
+      letter-spacing: 0;
+    }
+    .rate-hard {
+      background: var(--warn-soft);
+      color: var(--warn);
+    }
+    .rate-mid {
+      background: var(--warm-soft);
+      color: var(--warm);
+    }
+    .rate-easy {
+      background: var(--ok-soft);
+      color: var(--ok);
+    }
+
+    .floating-xp {
+      position: fixed;
+      left: 50%;
+      top: 35%;
+      transform: translate(-50%, 0);
+      font-size: 28px;
+      font-weight: 800;
+      background: var(--gold-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      pointer-events: none;
+      animation: float-up 1.1s ease-out forwards;
+      filter: drop-shadow(0 2px 12px rgba(255,255,255,.8));
+      z-index: 100;
+    }
+
+    /* ---------- DONE ---------- */
+    .done-content {
+      flex: 1;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 20px;
+      padding: 24px 0;
+    }
+    .done-trophy {
+      width: 132px; height: 132px;
+      border-radius: 50%;
+      background: var(--gold-gradient);
+      display: grid; place-items: center;
+      position: relative;
+      box-shadow:
+        0 0 0 6px rgba(184, 134, 43, .12),
+        0 0 0 14px rgba(184, 134, 43, .06),
+        0 14px 40px rgba(184, 134, 43, .55),
+        0 0 60px rgba(255, 38, 176, .35);
+      animation: trophy-bob 2.4s ease-in-out infinite;
+    }
+    .done-trophy::before {
+      /* slow rotating halo */
+      content: "";
+      position: absolute; inset: -18px;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 0deg,
+        rgba(184, 134, 43, .35),
+        rgba(255, 38, 176, .35),
+        rgba(0, 240, 255, .35),
+        rgba(184, 134, 43, .35)
+      );
+      filter: blur(14px);
+      opacity: .8;
+      z-index: -1;
+      animation: trophy-spin 6s linear infinite;
+    }
+    .done-trophy::after {
+      /* sparkle dots */
+      content: "";
+      position: absolute; inset: -22px;
+      background:
+        radial-gradient(circle 3px at 12% 18%,  #fff 99%, transparent 100%),
+        radial-gradient(circle 2px at 88% 22%,  #fff 99%, transparent 100%),
+        radial-gradient(circle 4px at 92% 78%,  #fff 99%, transparent 100%),
+        radial-gradient(circle 2px at 8%  82%,  #fff 99%, transparent 100%),
+        radial-gradient(circle 3px at 50% 4%,   #fff 99%, transparent 100%),
+        radial-gradient(circle 2px at 50% 100%, #fff 99%, transparent 100%);
+      pointer-events: none;
+      animation: trophy-twinkle 2.2s ease-in-out infinite;
+    }
+    @keyframes trophy-bob {
+      0%, 100% { transform: translateY(0)   scale(1); }
+      50%      { transform: translateY(-6px) scale(1.04); }
+    }
+    @keyframes trophy-spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes trophy-twinkle {
+      0%, 100% { opacity: .35; transform: scale(.95); }
+      50%      { opacity: 1;   transform: scale(1.05); }
+    }
+    .done-title {
+      font-size: 26px; font-weight: 800;
+      color: var(--ink); letter-spacing: -.02em;
+    }
+    .done-sub {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .done-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+    }
+    .done-stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 8px;
+    }
+    .done-stat-num {
+      font-size: 22px; font-weight: 800;
+      letter-spacing: -.02em;
+    }
+    .done-stat-num.ok { color: var(--ok); }
+    .done-stat-num.warn { color: var(--warn); }
+    .done-stat-num.mid { color: var(--warm); }
+    .done-stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    .xp-gained {
+      background: var(--teal);
+      color: white;
+      padding: 14px 20px;
+      border-radius: 14px;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -.01em;
+      box-shadow: 0 8px 18px rgba(13,115,119,.25);
+    }
+
+    .home-btn {
+      width: 100%;
+      background: var(--teal);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      box-shadow: 0 8px 18px rgba(13,115,119,.22);
+      margin-bottom: 14px;
+    }
+    .home-btn.secondary {
+      background: var(--card);
+      color: var(--teal);
+      border: 1px solid var(--border);
+      box-shadow: none;
+    }
+
+    .promotion {
+      background: linear-gradient(135deg, var(--gold), #ca9b06);
+      color: white;
+      padding: 16px 20px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 12px 28px rgba(234, 179, 8, .3);
+      animation: pulse 1.4s infinite;
+    }
+    .promotion-eyebrow {
+      font-size: 11px; opacity: .85;
+      letter-spacing: .08em; text-transform: uppercase;
+      font-weight: 700;
+    }
+    .promotion-title {
+      font-size: 19px; font-weight: 800;
+      margin-top: 4px;
+      letter-spacing: -.01em;
+    }
+
+    /* ---------- SETTINGS ---------- */
+    .sheet-bg {
+      position: fixed; inset: 0;
+      background: rgba(11, 24, 24, .55);
+      display: none;
+      z-index: 200;
+      backdrop-filter: blur(2px);
+    }
+    .sheet-bg.open { display: block; }
+    .sheet {
+      position: fixed; left: 0; right: 0; bottom: 0;
+      background: var(--card);
+      border-radius: 22px 22px 0 0;
+      padding: 14px 20px calc(20px + env(safe-area-inset-bottom));
+      max-width: 560px;
+      margin: 0 auto;
+      box-shadow: 0 -10px 30px rgba(0,0,0,.18);
+      animation: slide-up .25s ease-out;
+      z-index: 201;
+    }
+    .sheet-handle {
+      width: 40px; height: 4px;
+      background: var(--border);
+      border-radius: 999px;
+      margin: 4px auto 16px;
+    }
+    .sheet h2 {
+      font-size: 17px; font-weight: 700;
+      color: var(--ink);
+      margin: 0 0 14px;
+    }
+    .sheet-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0;
+      border-top: 1px solid var(--border);
+    }
+    .sheet-row:first-of-type { border-top: none; }
+    .sheet-row label { font-weight: 500; color: var(--ink); }
+    .sheet-row .desc { font-size: 12px; color: var(--muted); }
+    .chip-row {
+      display: flex; gap: 6px;
+    }
+    .chip {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--bg2);
+      border: 1px solid transparent;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--body);
+    }
+    .chip.active {
+      background: var(--teal);
+      color: white;
+    }
+    .toggle {
+      width: 48px; height: 28px;
+      background: var(--border);
+      border-radius: 999px;
+      position: relative;
+      transition: background .2s;
+      border: none;
+    }
+    .toggle::after {
+      content: "";
+      width: 24px; height: 24px;
+      background: white; border-radius: 50%;
+      position: absolute; top: 2px; left: 2px;
+      transition: transform .2s;
+      box-shadow: 0 2px 4px rgba(0,0,0,.2);
+    }
+    .toggle.on { background: var(--teal); }
+    .toggle.on::after { transform: translateX(20px); }
+
+    .sheet-danger {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--warn-soft);
+      color: var(--warn);
+      border: none;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--muted);
+      padding: 30px 20px;
+    }
+    .empty-state h3 { color: var(--ink); margin-bottom: 6px; font-size: 18px; }
+
+    .confetti {
+      position: fixed; top: -20px; pointer-events: none;
+      width: 10px; height: 10px;
+      z-index: 99;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+      padding: 10px 0 10px;
+      letter-spacing: .02em;
+    }
+    .footer a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .footer a:hover { text-decoration: underline; }
+
+    .sheet-link-row {
+      display: block;
+      text-align: center;
+      padding: 14px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .sheet-link-row a {
+      color: var(--muted);
+      text-decoration: none;
+    }
+    .sheet-link-row a:hover { text-decoration: underline; }
+
+    /* ---------- TTS Speaker button on cards ---------- */
+    .speaker-btn {
+      position: absolute; bottom: 16px; right: 16px;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      display: grid; place-items: center;
+      color: var(--primary);
+      cursor: pointer;
+      z-index: 3;
+      transition: transform .15s, background .15s;
+    }
+    .speaker-btn:active { transform: scale(.9); }
+    .speaker-btn.playing {
+      background: var(--gold-gradient);
+      color: white;
+      border-color: transparent;
+      animation: speaker-pulse 0.6s ease-out;
+    }
+    @keyframes speaker-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(184, 134, 43, .55); }
+      100% { box-shadow: 0 0 0 16px rgba(184, 134, 43, 0); }
+    }
+
+    /* ---------- Combo pill (during session) ---------- */
+    .combo-pill {
+      position: fixed; top: max(env(safe-area-inset-top), 8px); left: 50%;
+      transform: translateX(-50%) translateY(-60px);
+      background: var(--gold-gradient);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: .02em;
+      box-shadow: 0 8px 24px rgba(184, 134, 43, .45);
+      pointer-events: none;
+      transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), opacity .3s;
+      opacity: 0;
+      z-index: 90;
+    }
+    .combo-pill.shown {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .combo-pill.bump {
+      animation: combo-bump .45s ease-out;
+    }
+    @keyframes combo-bump {
+      0%   { transform: translateX(-50%) translateY(0) scale(1); }
+      40%  { transform: translateX(-50%) translateY(0) scale(1.18); }
+      100% { transform: translateX(-50%) translateY(0) scale(1); }
+    }
+
+    /* ---------- Daily goal ring (home) ---------- */
+    .goal-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .goal-ring { flex-shrink: 0; }
+    .goal-ring-fill { transition: stroke-dashoffset .5s cubic-bezier(.4,.2,.2,1); }
+    .goal-text { flex: 1; min-width: 0; }
+    .goal-title {
+      font-size: 11px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .05em;
+      font-weight: 600;
+    }
+    .goal-progress {
+      font-size: 18px; font-weight: 700; color: var(--ink);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -.01em;
+      margin-top: 2px;
+    }
+    .goal-hint { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .goal-card.complete .goal-hint {
+      background: var(--gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+
+    <!-- HOME -->
+    <section id="screen-home" class="screen active">
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-mark">W</div>
+          <div>
+            <div class="brand-name">Wortgold</div>
+            <div class="brand-sub" id="brand-sub-text">Englisch → Deutsch</div>
+          </div>
+        </div>
+        <button class="icon-btn" id="btn-settings" aria-label="Einstellungen">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+      </div>
+
+      <div class="level-card">
+        <div class="level-row">
+          <div class="level-name" id="level-name">Lehrling</div>
+          <div class="level-xp" id="level-xp">0 / 50 XP</div>
+        </div>
+        <div class="progress"><div class="progress-bar" id="level-bar" style="width:0%"></div></div>
+        <div class="level-meta">
+          <span id="next-level">Nächste Stufe: Geselle</span>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="stat-num" id="stat-due">0</div>
+          <div class="stat-label">Fällig</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="stat-new">618</div>
+          <div class="stat-label">Neu</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="stat-mastered">0</div>
+          <div class="stat-label">Gemeistert</div>
+        </div>
+      </div>
+
+      <div class="boxes-card">
+        <div class="boxes-title">
+          <span>Lernfächer</span>
+          <span style="text-transform:none;letter-spacing:0;color:var(--muted);font-weight:500" id="boxes-info">— · 1 / 2 / 4 / 8 / 16 Tage</span>
+        </div>
+        <div class="boxes-row">
+          <div class="box box-1"><div class="box-dot"></div><div class="box-num">Fach 1</div><div class="box-count" id="b-1">0</div></div>
+          <div class="box box-2"><div class="box-dot"></div><div class="box-num">Fach 2</div><div class="box-count" id="b-2">0</div></div>
+          <div class="box box-3"><div class="box-dot"></div><div class="box-num">Fach 3</div><div class="box-count" id="b-3">0</div></div>
+          <div class="box box-4"><div class="box-dot"></div><div class="box-num">Fach 4</div><div class="box-count" id="b-4">0</div></div>
+          <div class="box box-5"><div class="box-dot"></div><div class="box-num">Fach 5</div><div class="box-count" id="b-5">0</div></div>
+        </div>
+      </div>
+
+      <div class="goal-card" id="goal-card">
+        <svg class="goal-ring" viewBox="0 0 80 80" width="56" height="56">
+          <defs>
+            <linearGradient id="goalGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%"   stop-color="#b8862b"/>
+              <stop offset="50%"  stop-color="#d9a93a"/>
+              <stop offset="100%" stop-color="#b8862b"/>
+            </linearGradient>
+          </defs>
+          <circle cx="40" cy="40" r="34" fill="none" stroke="var(--border)" stroke-width="8"/>
+          <circle id="goal-ring-fill" class="goal-ring-fill"
+                  cx="40" cy="40" r="34" fill="none"
+                  stroke="url(#goalGrad)" stroke-width="8" stroke-linecap="round"
+                  stroke-dasharray="213.6" stroke-dashoffset="213.6"
+                  transform="rotate(-90 40 40)"/>
+        </svg>
+        <div class="goal-text">
+          <div class="goal-title">Tagesziel</div>
+          <div class="goal-progress" id="goal-progress">0 / 20 heute</div>
+          <div class="goal-hint" id="goal-hint">Noch 20 Karten bis zur Tagesfanfare</div>
+        </div>
+      </div>
+
+      <div class="heat-card" id="heat-card">
+        <div class="heat-title">
+          <span>Letzte 30 Tage</span>
+          <span class="heat-meta" id="heat-meta">— Tage in Folge</span>
+        </div>
+        <div class="heat-grid" id="heat-grid"></div>
+        <div class="heat-summary">
+          <span id="heat-stats">— Karten · — aktive Tage</span>
+          <span class="heat-pill" id="heat-best" style="display:none">Bestleistung — Tage</span>
+        </div>
+      </div>
+
+      <div id="welcome-card" class="welcome-card" style="display:none">
+        <div class="welcome-eyebrow">Willkommen</div>
+        <div class="welcome-title">Bereit für die erste Karte?</div>
+        <div class="welcome-text">
+          Was du weißt, kommt seltener wieder. Was wackelt, ist morgen wieder dran. Bewerte dich ehrlich — das ist der ganze Trick.
+        </div>
+      </div>
+
+      <button class="start-btn" id="btn-start">
+        <span id="start-btn-label">Heute lernen</span>
+        <span class="start-btn-sub" id="start-btn-sub">— Karten in dieser Session</span>
+      </button>
+
+      <div class="footer">
+        <a href="https://florianloyns.github.io/Impressum/" target="_blank" rel="noopener">Impressum</a>
+      </div>
+    </section>
+
+    <!-- REVIEW -->
+    <section id="screen-review" class="screen">
+      <div class="combo-pill" id="combo-pill"><span id="combo-flame">🔥</span> <span id="combo-num">0</span> in Folge</div>
+      <div class="review-top">
+        <button class="icon-btn" id="btn-quit" aria-label="Schliessen">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+        <div class="review-progress"><div class="review-progress-bar" id="r-progress" style="width:0%"></div></div>
+        <div class="review-counter" id="r-counter">0 / 0</div>
+      </div>
+
+      <div class="card-stage">
+        <div class="flashcard" id="card">
+          <div class="face front">
+            <div class="card-meta-top" id="card-front-label">English</div>
+            <div class="card-meta-right" id="card-box-front">
+              <span class="dot" style="background:var(--b1)"></span>
+              <span>Fach 1</span>
+            </div>
+            <button class="speaker-btn" id="speaker-front" aria-label="Aussprache" style="display:none">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4.03v8.05A4.5 4.5 0 0 0 16.5 12zM14 3.23v2.06a7 7 0 0 1 0 13.42v2.06a9 9 0 0 0 0-17.54z"/></svg>
+            </button>
+            <div class="term" id="card-term">—</div>
+            <div class="flip-hint">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+              Tippen zum Umdrehen
+            </div>
+          </div>
+          <div class="face back">
+            <div class="card-meta-top" id="card-back-label">Deutsch</div>
+            <div class="card-meta-right" id="card-box-back">
+              <span class="dot" style="background:var(--b1)"></span>
+              <span>Fach 1</span>
+            </div>
+            <button class="speaker-btn" id="speaker-back" aria-label="Aussprache" style="display:none">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4.03v8.05A4.5 4.5 0 0 0 16.5 12zM14 3.23v2.06a7 7 0 0 1 0 13.42v2.06a9 9 0 0 0 0-17.54z"/></svg>
+            </button>
+            <div class="term-back" id="card-term-back">—</div>
+            <div class="definition" id="card-def">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rate-row" id="rate-row">
+        <button class="rate-btn rate-hard" data-rating="0">
+          Wusste nicht
+          <span class="rate-sub">→ Fach 1</span>
+        </button>
+        <button class="rate-btn rate-mid" data-rating="1">
+          Unsicher
+          <span class="rate-sub">→ Fach bleibt</span>
+        </button>
+        <button class="rate-btn rate-easy" data-rating="2">
+          Wusste ich
+          <span class="rate-sub">+1 XP · Fach +1</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- DONE -->
+    <section id="screen-done" class="screen">
+      <div class="done-content">
+        <div class="done-trophy">
+          <svg width="78" height="78" viewBox="0 0 24 24" fill="white" style="filter: drop-shadow(0 2px 6px rgba(0,0,0,.25)) drop-shadow(0 0 12px rgba(255,255,255,.5));"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>
+        </div>
+        <div>
+          <div class="done-title" id="done-title">Schicht beendet</div>
+          <div class="done-sub" id="done-sub">— Karten in dieser Session</div>
+        </div>
+
+        <div class="done-stats">
+          <div class="done-stat">
+            <div class="done-stat-num ok" id="done-easy">0</div>
+            <div class="done-stat-label">Wusste</div>
+          </div>
+          <div class="done-stat">
+            <div class="done-stat-num mid" id="done-mid">0</div>
+            <div class="done-stat-label">Unsicher</div>
+          </div>
+          <div class="done-stat">
+            <div class="done-stat-num warn" id="done-hard">0</div>
+            <div class="done-stat-label">Falsch</div>
+          </div>
+        </div>
+
+        <div class="xp-gained" id="xp-gained">+0 XP</div>
+
+        <div id="promotion-wrap" style="width:100%;display:none">
+          <div class="promotion">
+            <div class="promotion-eyebrow">Aufstieg!</div>
+            <div class="promotion-title" id="promotion-title">—</div>
+          </div>
+        </div>
+      </div>
+
+      <button class="home-btn" id="btn-home">Zurück zum Start</button>
+      <button class="home-btn secondary" id="btn-continue" style="display:none">Weiter lernen</button>
+    </section>
+
+  </div>
+
+  <!-- SETTINGS SHEET -->
+  <div class="sheet-bg" id="sheet-bg"></div>
+  <div class="sheet" id="sheet" style="display:none">
+    <div class="sheet-handle"></div>
+    <h2>Einstellungen</h2>
+
+    <div class="sheet-row">
+      <div>
+        <label>Tägliches Pensum</label>
+        <div class="desc">Wie viele Karten pro Session</div>
+      </div>
+      <div class="chip-row" id="chip-limit">
+        <button class="chip" data-limit="10">10</button>
+        <button class="chip" data-limit="20">20</button>
+        <button class="chip" data-limit="30">30</button>
+        <button class="chip" data-limit="50">50</button>
+      </div>
+    </div>
+
+    <div class="sheet-row">
+      <div>
+        <label>Niveau</label>
+        <div class="desc">Welche CEFR-Stufen sollen geübt werden?</div>
+      </div>
+      <div class="chip-row" id="chip-levels" style="flex-wrap:wrap; gap:6px">
+        <button class="chip" data-level="A1">A1</button>
+        <button class="chip" data-level="A2">A2</button>
+        <button class="chip" data-level="B1">B1</button>
+        <button class="chip" data-level="B2">B2</button>
+        <button class="chip" data-level="C1">C1</button>
+      </div>
+    </div>
+
+    <div class="sheet-row">
+      <div>
+        <label>Richtung</label>
+        <div class="desc">Was steht vorne auf der Karte?</div>
+      </div>
+      <div class="chip-row" id="chip-direction">
+        <button class="chip" data-direction="la-de">EN→DE</button>
+        <button class="chip" data-direction="de-la">DE→EN</button>
+        <button class="chip" data-direction="mixed">Mix</button>
+      </div>
+    </div>
+
+    <div class="sheet-row">
+      <div>
+        <label>Reihenfolge</label>
+        <div class="desc">Alphabetisch oder mix</div>
+      </div>
+      <div class="chip-row" id="chip-order">
+        <button class="chip" data-order="abc">A → Z</button>
+        <button class="chip" data-order="random">Mischen</button>
+      </div>
+    </div>
+
+    <div class="sheet-row">
+      <div>
+        <label>Sound</label>
+        <div class="desc">Akustisches Feedback</div>
+      </div>
+      <button class="toggle" id="toggle-sound" aria-label="Sound umschalten"></button>
+    </div>
+
+    <div class="sheet-row">
+      <div>
+        <label>Erscheinung</label>
+        <div class="desc">Hell, dunkel oder System</div>
+      </div>
+      <div class="chip-row" id="chip-theme">
+        <button class="chip" data-theme="system">System</button>
+        <button class="chip" data-theme="light">Hell</button>
+        <button class="chip" data-theme="dark">Dunkel</button>
+      </div>
+    </div>
+
+    <button class="sheet-danger" id="btn-reset">Fortschritt zurücksetzen</button>
+
+    <div class="sheet-link-row">
+      <a href="https://florianloyns.github.io/Impressum/" target="_blank" rel="noopener">Impressum</a>
+    </div>
+  </div>
+
+  <!-- Fallback-Vokabeln für lokale file:// Tests. Im Hosting wird vocab.csv per fetch nachgeladen und überschreibt diesen Block. -->
+  <script type="text/plain" id="vocab-csv">
+wort;übersetzung;wortart;niveau;thema
+a, an;ein / eine;indefinite article;A1;
+about;über / ungefähr;prep., adv.;A1;
+above;über / oberhalb;prep., adv.;A1;
+across;über / quer;prep., adv.;A1;
+action;Handlung / Aktion;n.;A1;
+activity;Aktivität;n.;A1;
+actor;Schauspieler;n.;A1;
+actress;Schauspielerin;n.;A1;
+add;hinzufügen;v.;A1;
+address;Adresse;n.;A1;
+adult;Erwachsener;n.;A1;
+advice;Rat / Ratschlag;n.;A1;
+afraid;ängstlich / besorgt;adj.;A1;
+after;nach;prep.;A1;
+afternoon;Nachmittag;n.;A1;
+again;wieder / nochmal;adv.;A1;
+age;Alter;n.;A1;
+ago;vor (zeitlich);adv.;A1;
+agree;zustimmen;v.;A1;
+air;Luft;n.;A1;
+airport;Flughafen;n.;A1;
+all;alle / alles;det., pron.;A1;
+also;auch;adv.;A1;
+always;immer;adv.;A1;
+amazing;erstaunlich / fantastisch;adj.;A1;
+and;und;conj.;A1;
+angry;wütend;adj.;A1;
+animal;Tier;n.;A1;
+answer;Antwort / antworten;n., v.;A1;
+any;irgendein;det., pron.;A1;
+anyone;irgendjemand;pron.;A1;
+anything;irgendetwas;pron.;A1;
+apartment;Wohnung;n.;A1;
+apple;Apfel;n.;A1;
+April;April;n.;A1;
+area;Gebiet / Bereich;n.;A1;
+arm;Arm;n.;A1;
+around;um / herum;prep., adv.;A1;
+arrive;ankommen;v.;A1;
+art;Kunst;n.;A1;
+article;Artikel;n.;A1;
+artist;Künstler:in;n.;A1;
+as;als / wie;prep.;A1;
+ask;fragen;v.;A1;
+at;an / bei;prep.;A1;
+August;August;n.;A1;
+aunt;Tante;n.;A1;
+autumn;Herbst;n.;A1;
+away;weg;adv.;A1;
+baby;Baby;n.;A1;
+back;Rücken / zurück;n., adv.;A1;
+bad;schlecht;adj.;A1;
+bag;Tasche;n.;A1;
+ball;Ball;n.;A1;
+banana;Banane;n.;A1;
+band;Band / Kapelle;n.;A1;
+bank (money);Bank (Geld);n.;A1;
+bath;Bad;n.;A1;
+bathroom;Badezimmer;n.;A1;
+be;sein;v., auxiliary v.;A1;
+beach;Strand;n.;A1;
+beautiful;schön;adj.;A1;
+because;weil;conj.;A1;
+become;werden;v.;A1;
+bed;Bett;n.;A1;
+bedroom;Schlafzimmer;n.;A1;
+beer;Bier;n.;A1;
+before;bevor / vor;prep.;A1;
+begin;beginnen / anfangen;v.;A1;
+beginning;Anfang;n.;A1;
+behind;hinter;prep., adv.;A1;
+believe;glauben;v.;A1;
+below;unter / unterhalb;adv., prep.;A1;
+best;beste:r;adj.;A1;
+better;besser;adj.;A1;
+between;zwischen;prep.;A1;
+bicycle;Fahrrad;n.;A1;
+big;groß;adj.;A1;
+bike;Fahrrad;n.;A1;
+bill;Rechnung;n.;A1;
+bird;Vogel;n.;A1;
+birthday;Geburtstag;n.;A1;
+black;schwarz;adj., n.;A1;
+blog;Blog;n.;A1;
+blonde;blond;adj.;A1;
+blue;blau;adj., n.;A1;
+boat;Boot;n.;A1;
+body;Körper;n.;A1;
+book;Buch;n.;A1;
+boot;Stiefel;n.;A1;
+bored;gelangweilt;adj.;A1;
+boring;langweilig;adj.;A1;
+born;geboren;v.;A1;
+bottle;Flasche;n.;A1;
+box;Schachtel / Kiste;n.;A1;
+boy;Junge;n.;A1;
+boyfriend;Freund (Beziehung);n.;A1;
+bread;Brot;n.;A1;
+break;Pause / brechen;v., n.;A1;
+breakfast;Frühstück;n.;A1;
+bring;bringen;v.;A1;
+brother;Bruder;n.;A1;
+brown;braun;adj., n.;A1;
+build;bauen;v.;A1;
+building;Gebäude;n.;A1;
+bus;Bus;n.;A1;
+business;Geschäft / Unternehmen;n.;A1;
+busy;beschäftigt;adj.;A1;
+but;aber;conj.;A1;
+butter;Butter;n.;A1;
+buy;kaufen;v.;A1;
+by;von / durch;prep.;A1;
+bye;tschüss;exclam.;A1;
+cafe;Café;n.;A1;
+cake;Kuchen;n.;A1;
+call;anrufen / Anruf;v., n.;A1;
+camera;Kamera;n.;A1;
+can;können / Dose;modal v.;A1;
+cannot;nicht können;modal v.;A1;
+capital;Hauptstadt / Großbuchstabe;n., adj.;A1;
+car;Auto;n.;A1;
+card;Karte;n.;A1;
+career;Karriere / Laufbahn;n.;A1;
+carrot;Karotte / Möhre;n.;A1;
+carry;tragen;v.;A1;
+cat;Katze;n.;A1;
+CD;CD;n.;A1;
+cent;Cent;n.;A1;
+centre;Zentrum / Mitte;n.;A1;
+century;Jahrhundert;n.;A1;
+chair;Stuhl;n.;A1;
+change;ändern / Wechsel;v., n.;A1;
+chart;Diagramm / Tabelle;n.;A1;
+cheap;billig / günstig;adj.;A1;
+check;prüfen / Scheck;v.;A1;
+cheese;Käse;n.;A1;
+chicken;Huhn / Hühnchen;n.;A1;
+child;Kind;n.;A1;
+chocolate;Schokolade;n.;A1;
+choose;wählen / aussuchen;v.;A1;
+cinema;Kino;n.;A1;
+city;Stadt;n.;A1;
+class;Klasse / Unterricht;n.;A1;
+classroom;Klassenzimmer;n.;A1;
+clean;sauber / putzen;adj., v.;A1;
+climb;klettern / steigen;v.;A1;
+clock;Uhr;n.;A1;
+close;schließen / nah;v.;A1;
+clothes;Kleidung;n.;A1;
+club;Klub / Verein;n.;A1;
+coat;Mantel;n.;A1;
+coffee;Kaffee;n.;A1;
+cold;kalt;adj., n.;A1;
+college;College / Hochschule;n.;A1;
+colour;Farbe;n.;A1;
+come;kommen;v.;A1;
+common;gemeinsam / häufig;adj.;A1;
+company;Firma / Gesellschaft;n.;A1;
+compare;vergleichen;v.;A1;
+complete;vollständig / vervollständigen;adj., v.;A1;
+computer;Computer;n.;A1;
+concert;Konzert;n.;A1;
+conversation;Gespräch;n.;A1;
+cook;kochen / Koch:in;v.;A1;
+cooking;Kochen;n.;A1;
+cool;kühl / cool;adj.;A1;
+correct;richtig / korrigieren;adj., v.;A1;
+cost;Kosten / kosten;n., v.;A1;
+could;könnte;modal v.;A1;
+country;Land;n.;A1;
+course;Kurs / Verlauf;n.;A1;
+cousin;Cousin / Cousine;n.;A1;
+cow;Kuh;n.;A1;
+cream;Sahne / Creme;n.;A1;
+create;erschaffen / erstellen;v.;A1;
+culture;Kultur;n.;A1;
+cup;Tasse / Becher;n.;A1;
+customer;Kunde / Kundin;n.;A1;
+cut;schneiden;v.;A1;
+dad;Papa;n.;A1;
+dance;tanzen / Tanz;n., v.;A1;
+dancer;Tänzer:in;n.;A1;
+dancing;Tanzen;n.;A1;
+dangerous;gefährlich;adj.;A1;
+dark;dunkel;adj.;A1;
+date;Datum / Verabredung;n.;A1;
+daughter;Tochter;n.;A1;
+day;Tag;n.;A1;
+dear;lieb / teuer;adj.;A1;
+December;Dezember;n.;A1;
+decide;entscheiden;v.;A1;
+delicious;köstlich / lecker;adj.;A1;
+describe;beschreiben;v.;A1;
+description;Beschreibung;n.;A1;
+design;Design / entwerfen;n., v.;A1;
+desk;Schreibtisch;n.;A1;
+detail;Detail;n.;A1;
+dialogue;Dialog;n.;A1;
+dictionary;Wörterbuch;n.;A1;
+die;sterben;v.;A1;
+diet;Ernährung / Diät;n.;A1;
+difference;Unterschied;n.;A1;
+different;anders / verschieden;adj.;A1;
+difficult;schwierig;adj.;A1;
+dinner;Abendessen;n.;A1;
+dirty;schmutzig;adj.;A1;
+discuss;besprechen / diskutieren;v.;A1;
+dish;Gericht / Geschirr;n.;A1;
+do;tun / machen;v., auxiliary v.;A1;
+doctor;Arzt / Ärztin;n.;A1;
+dog;Hund;n.;A1;
+dollar;Dollar;n.;A1;
+door;Tür;n.;A1;
+down;hinunter / unten;adv., prep.;A1;
+downstairs;unten / nach unten;adv.;A1;
+draw;zeichnen;v.;A1;
+dress;Kleid / sich anziehen;n., v.;A1;
+drink;trinken / Getränk;n., v.;A1;
+drive;fahren;v.;A1;
+driver;Fahrer:in;n.;A1;
+during;während;prep.;A1;
+DVD;DVD;n.;A1;
+ear;Ohr;n.;A1;
+early;früh;adj., adv.;A1;
+east;Osten;n., adj., adv.;A1;
+easy;leicht / einfach;adj.;A1;
+eat;essen;v.;A1;
+egg;Ei;n.;A1;
+eight;acht;number;A1;
+eighteen;achtzehn;number;A1;
+eighty;achtzig;number;A1;
+elephant;Elefant;n.;A1;
+eleven;elf;number;A1;
+else;sonst;adv.;A1;
+email;E-Mail;n., v.;A1;
+end;Ende / beenden;n., v.;A1;
+enjoy;genießen;v.;A1;
+enough;genug;det., pron., adv.;A1;
+euro;Euro;n.;A1;
+even;sogar / eben;adv.;A1;
+evening;Abend;n.;A1;
+event;Ereignis / Veranstaltung;n.;A1;
+ever;jemals;adv.;A1;
+every;jede:r;det.;A1;
+everybody;jeder / alle;pron.;A1;
+everyone;jeder / alle;pron.;A1;
+everything;alles;pron.;A1;
+exam;Prüfung;n.;A1;
+example;Beispiel;n.;A1;
+excited;aufgeregt / begeistert;adj.;A1;
+exciting;aufregend;adj.;A1;
+exercise;Übung / sich bewegen;n., v.;A1;
+expensive;teuer;adj.;A1;
+explain;erklären;v.;A1;
+extra;zusätzlich / extra;adj.;A1;
+eye;Auge;n.;A1;
+face;Gesicht;n.;A1;
+fact;Tatsache / Fakt;n.;A1;
+fall;fallen / Sturz;v.;A1;
+false;falsch;adj.;A1;
+family;Familie;n., adj.;A1;
+famous;berühmt;adj.;A1;
+fantastic;fantastisch;adj.;A1;
+far;weit / entfernt;adv.;A1;
+farm;Bauernhof;n.;A1;
+farmer;Bauer / Bäuerin;n.;A1;
+fast;schnell;adj., adv.;A1;
+fat;dick / Fett;adj.;A1;
+father;Vater;n.;A1;
+favourite;Lieblings-;adj., n.;A1;
+February;Februar;n.;A1;
+feel;fühlen;v.;A1;
+feeling;Gefühl;n.;A1;
+festival;Festival / Fest;n.;A1;
+few det./adj.,;wenige;pron.;A1;
+fifteen;fünfzehn;number;A1;
+fifth;fünfte:r;number;A1;
+fifty;fünfzig;number;A1;
+fill;füllen;v.;A1;
+film;Film;n.;A1;
+final;endgültig / Finale;adj.;A1;
+find;finden;v.;A1;
+fine;gut / fein;adj.;A1;
+finish;beenden / Ende;v.;A1;
+fire;Feuer;n.;A1;
+first det./number,;erste:r;adv.;A1;
+fish;Fisch;n.;A1;
+five;fünf;number;A1;
+flat;Wohnung / flach;n.;A1;
+flight;Flug;n.;A1;
+floor;Boden / Stockwerk;n.;A1;
+flower;Blume;n.;A1;
+fly;fliegen;v.;A1;
+follow;folgen;v.;A1;
+food;Essen / Nahrung;n.;A1;
+foot;Fuß;n.;A1;
+football;Fußball;n.;A1;
+for;für;prep.;A1;
+forget;vergessen;v.;A1;
+form;Form / Formular;n., v.;A1;
+forty;vierzig;number;A1;
+four;vier;number;A1;
+fourteen;vierzehn;number;A1;
+fourth;vierte:r;number;A1;
+free;frei / kostenlos;adj.;A1;
+Friday;Freitag;n.;A1;
+friend;Freund:in;n.;A1;
+friendly;freundlich;adj.;A1;
+from;von / aus;prep.;A1;
+front;Vorderseite / vorne;n., adj.;A1;
+fruit;Obst / Frucht;n.;A1;
+full;voll;adj.;A1;
+fun;Spaß;n.;A1;
+funny;lustig;adj.;A1;
+future;Zukunft;n.;A1;
+game;Spiel;n.;A1;
+garden;Garten;n.;A1;
+geography;Geografie / Erdkunde;n.;A1;
+get;bekommen / werden;v.;A1;
+girl;Mädchen;n.;A1;
+girlfriend;Freundin (Beziehung);n.;A1;
+give;geben;v.;A1;
+glass;Glas;n.;A1;
+go;gehen;v.;A1;
+good;gut;adj.;A1;
+grandfather;Großvater;n.;A1;
+grandmother;Großmutter;n.;A1;
+grandparent;Großelternteil;n.;A1;
+great;großartig;adj.;A1;
+green;grün;adj., n.;A1;
+grey;grau;adj., n.;A1;
+group;Gruppe;n.;A1;
+grow;wachsen;v.;A1;
+guess;raten / Vermutung;v., n.;A1;
+guitar;Gitarre;n.;A1;
+gym;Fitnessstudio / Turnhalle;n.;A1;
+hair;Haar / Haare;n.;A1;
+hand;Hand;n.;A1;
+happen;passieren / geschehen;v.;A1;
+happy;glücklich;adj.;A1;
+hard;hart / schwer;adj., adv.;A1;
+hat;Hut / Mütze;n.;A1;
+hate;hassen;v.;A1;
+have;haben;v.;A1;
+have to;müssen;modal v.;A1;
+he;er;pron.;A1;
+head;Kopf;n.;A1;
+health;Gesundheit;n.;A1;
+healthy;gesund;adj.;A1;
+hear;hören;v.;A1;
+help;helfen / Hilfe;v., n.;A1;
+her;ihr / sie;pron., det.;A1;
+here;hier;adv.;A1;
+hey;hey;exclam.;A1;
+hi;hi;exclam.;A1;
+high;hoch;adj.;A1;
+him;ihn / ihm;pron.;A1;
+his;sein;det.;A1;
+history;Geschichte;n.;A1;
+hobby;Hobby;n.;A1;
+holiday;Urlaub / Ferien;n.;A1;
+home;Zuhause / nach Hause;n., adv.;A1;
+homework;Hausaufgaben;n.;A1;
+hope;hoffen / Hoffnung;v.;A1;
+horse;Pferd;n.;A1;
+hospital;Krankenhaus;n.;A1;
+hot;heiß;adj.;A1;
+hotel;Hotel;n.;A1;
+hour;Stunde;n.;A1;
+house;Haus;n.;A1;
+how;wie;adv.;A1;
+however;jedoch / wie auch immer;adv.;A1;
+hundred;hundert;number;A1;
+hungry;hungrig;adj.;A1;
+husband;Ehemann;n.;A1;
+I;ich;pron.;A1;
+ice;Eis;n.;A1;
+ice cream;Eis (Speiseeis);n.;A1;
+idea;Idee;n.;A1;
+if;wenn / falls;conj.;A1;
+imagine;sich vorstellen;v.;A1;
+important;wichtig;adj.;A1;
+improve;verbessern;v.;A1;
+in;in;prep., adv.;A1;
+include;einschließen / beinhalten;v.;A1;
+information;Information;n.;A1;
+interest;Interesse;n., v.;A1;
+interested;interessiert;adj.;A1;
+interesting;interessant;adj.;A1;
+internet;Internet;n.;A1;
+interview;Interview;n., v.;A1;
+into;in (hinein);prep.;A1;
+introduce;vorstellen;v.;A1;
+island;Insel;n.;A1;
+it;es;pron.;A1;
+its;sein / ihr;det.;A1;
+jacket;Jacke;n.;A1;
+January;Januar;n.;A1;
+jeans;Jeans;n.;A1;
+job;Job / Arbeit;n.;A1;
+join;beitreten / verbinden;v.;A1;
+journey;Reise;n.;A1;
+juice;Saft;n.;A1;
+July;Juli;n.;A1;
+June;Juni;n.;A1;
+just;gerade / nur;adv.;A1;
+keep;behalten / halten;v.;A1;
+key;Schlüssel;n., adj.;A1;
+kilometre;Kilometer;n.;A1;
+kind (type);Art / Sorte;n.;A1;
+kitchen;Küche;n.;A1;
+know;wissen / kennen;v.;A1;
+land;Land / landen;n.;A1;
+language;Sprache;n.;A1;
+large;groß;adj.;A1;
+last (final);letzte:r / endgültig;det.;A1;
+late;spät;adj., adv.;A1;
+later;später;adv.;A1;
+laugh;lachen;v., n.;A1;
+learn;lernen;v.;A1;
+leave;verlassen / weggehen;v.;A1;
+left;links;adj., adv., n.;A1;
+leg;Bein;n.;A1;
+lesson;Lektion / Unterrichtsstunde;n.;A1;
+let;lassen;v.;A1;
+letter;Brief / Buchstabe;n.;A1;
+library;Bibliothek;n.;A1;
+lie;lügen / liegen;v.;A1;
+life;Leben;n.;A1;
+like (similar);wie / ähnlich;prep.;A1;
+like (find sb/sth pleasant);mögen;v.;A1;
+line;Linie / Reihe;n.;A1;
+lion;Löwe;n.;A1;
+list;Liste;n., v.;A1;
+listen;zuhören;v.;A1;
+live;leben / wohnen;v.;A1;
+local;örtlich / lokal;adj.;A1;
+long;lang;adj., adv.;A1;
+look;schauen / aussehen;v.;A1;
+lose;verlieren;v.;A1;
+lot;Menge / viel;pron., det., adv.;A1;
+love;lieben / Liebe;n., v.;A1;
+lunch;Mittagessen;n.;A1;
+machine;Maschine;n.;A1;
+magazine;Zeitschrift;n.;A1;
+main;Haupt-;adj.;A1;
+make;machen;v.;A1;
+man;Mann;n.;A1;
+map;Karte / Stadtplan;n.;A1;
+March;März;n.;A1;
+market;Markt;n.;A1;
+married;verheiratet;adj.;A1;
+match (contest/correspond);Spiel / passen;n., v.;A1;
+May;Mai;n.;A1;
+maybe;vielleicht;adv.;A1;
+me;mich / mir;pron.;A1;
+meal;Mahlzeit;n.;A1;
+mean;bedeuten / gemein;v.;A1;
+meaning;Bedeutung;n.;A1;
+meat;Fleisch;n.;A1;
+meet;treffen;v.;A1;
+meeting;Treffen / Besprechung;n.;A1;
+member;Mitglied;n.;A1;
+menu;Speisekarte / Menü;n.;A1;
+message;Nachricht;n.;A1;
+metre;Meter;n.;A1;
+midnight;Mitternacht;n.;A1;
+mile;Meile;n.;A1;
+milk;Milch;n.;A1;
+million;Million;number;A1;
+minute;Minute;n.;A1;
+miss;verpassen / vermissen;v.;A1;
+mistake;Fehler;n.;A1;
+model;Modell;n.;A1;
+modern;modern;adj.;A1;
+moment;Moment;n.;A1;
+Monday;Montag;n.;A1;
+money;Geld;n.;A1;
+month;Monat;n.;A1;
+more det./pron.,;mehr;adv.;A1;
+morning;Morgen;n.;A1;
+most det./pron.,;am meisten / die meisten;adv.;A1;
+mother;Mutter;n.;A1;
+mountain;Berg;n.;A1;
+mouse;Maus;n.;A1;
+mouth;Mund;n.;A1;
+move;bewegen / umziehen;v.;A1;
+movie;Film;n.;A1;
+much det./pron.,;viel;adv.;A1;
+mum;Mama;n.;A1;
+museum;Museum;n.;A1;
+music;Musik;n.;A1;
+must;müssen;modal v.;A1;
+my;mein;det.;A1;
+name;Name;n., v.;A1;
+natural;natürlich;adj.;A1;
+near;nahe;prep., adj., adv.;A1;
+need;brauchen;v.;A1;
+negative;negativ;adj.;A1;
+neighbour;Nachbar:in;n.;A1;
+never;nie;adv.;A1;
+new;neu;adj.;A1;
+news;Neuigkeiten / Nachrichten;n.;A1;
+newspaper;Zeitung;n.;A1;
+next;nächste:r;adj., adv.;A1;
+next to;neben;prep.;A1;
+nice;nett / schön;adj.;A1;
+night;Nacht;n.;A1;
+nine;neun;number;A1;
+nineteen;neunzehn;number;A1;
+ninety;neunzig;number;A1;
+no;nein / kein;exclam., det.;A1;
+no one;niemand;pron.;A1;
+nobody;niemand;pron.;A1;
+north;Norden;n., adj., adv.;A1;
+nose;Nase;n.;A1;
+not;nicht;adv.;A1;
+note;Notiz / Note;n.;A1;
+nothing;nichts;pron.;A1;
+November;November;n.;A1;
+now;jetzt;adv.;A1;
+number;Zahl / Nummer;n.;A1;
+nurse;Krankenpfleger:in;n.;A1;
+object;Objekt / Gegenstand;n.;A1;
+o’clock;Uhr (Uhrzeit);adv.;A1;
+October;Oktober;n.;A1;
+of;von;prep.;A1;
+off;aus / weg;adv., prep.;A1;
+office;Büro;n.;A1;
+often;oft;adv.;A1;
+oh;oh;exclam.;A1;
+old;alt;adj.;A1;
+on;auf / an;prep., adv.;A1;
+once;einmal;adv.;A1;
+one number/det.,;eins;pron.;A1;
+onion;Zwiebel;n.;A1;
+online;online;adj., adv.;A1;
+only;nur;adj., adv.;A1;
+open;offen / öffnen;adj., v.;A1;
+opinion;Meinung;n.;A1;
+opposite;Gegenteil / gegenüber;adj., n., prep., adv.;A1;
+or;oder;conj.;A1;
+orange;Orange / orange;n., adj.;A1;
+order;Bestellung / bestellen;n., v.;A1;
+our;unser;det.;A1;
+outside;außen / draußen;adv.;A1;
+over;über;prep., adv.;A1;
+page;Seite;n.;A1;
+paint;malen / Farbe;v., n.;A1;
+painting;Gemälde / Malerei;n.;A1;
+pair;Paar;n.;A1;
+paper;Papier;n.;A1;
+paragraph;Absatz;n.;A1;
+parent;Elternteil;n.;A1;
+park;Park / parken;n., v.;A1;
+part;Teil;n.;A1;
+partner;Partner:in;n.;A1;
+party;Party / Partei;n.;A1;
+passport;Reisepass;n.;A1;
+past;Vergangenheit / vorbei;adj., n., prep.;A1;
+pay;bezahlen;v.;A1;
+pen;Stift / Kuli;n.;A1;
+pencil;Bleistift;n.;A1;
+people;Leute / Menschen;n.;A1;
+pepper;Pfeffer / Paprika;n.;A1;
+perfect;perfekt;adj.;A1;
+period;Zeitraum / Punkt;n.;A1;
+person;Person;n.;A1;
+personal;persönlich;adj.;A1;
+phone;Telefon / Handy;n., v.;A1;
+photo;Foto;n.;A1;
+photograph;Foto / Fotografie;n.;A1;
+phrase;Phrase / Wendung;n.;A1;
+piano;Klavier;n.;A1;
+picture;Bild;n.;A1;
+piece;Stück;n.;A1;
+pig;Schwein;n.;A1;
+pink;rosa;adj., n.;A1;
+place;Ort / Platz;n.;A1;
+plan;Plan / planen;n., v.;A1;
+plane;Flugzeug;n.;A1;
+plant;Pflanze / pflanzen;n.;A1;
+play;spielen;v., n.;A1;
+player;Spieler:in;n.;A1;
+please;bitte;exclam.;A1;
+point;Punkt / zeigen;n.;A1;
+police;Polizei;n.;A1;
+policeman;Polizist;n.;A1;
+pool;Pool / Schwimmbecken;n.;A1;
+poor;arm;adj.;A1;
+popular;beliebt / populär;adj.;A1;
+positive;positiv;adj.;A1;
+possible;möglich;adj.;A1;
+post;Post / Beitrag;n., v.;A1;
+potato;Kartoffel;n.;A1;
+pound;Pfund;n.;A1;
+practice;Übung / Praxis;n.;A1;
+practise;üben;v.;A1;
+prefer;bevorzugen;v.;A1;
+prepare;vorbereiten;v.;A1;
+present;Geschenk / anwesend;adj., n.;A1;
+pretty;hübsch / ziemlich;adj., adv.;A1;
+price;Preis;n.;A1;
+probably;wahrscheinlich;adv.;A1;
+problem;Problem;n.;A1;
+product;Produkt;n.;A1;
+programme;Programm / Sendung;n.;A1;
+project;Projekt;n.;A1;
+purple;lila / violett;adj., n.;A1;
+put;legen / setzen;v.;A1;
+quarter;Viertel;n.;A1;
+question;Frage;n.;A1;
+quick;schnell;adj.;A1;
+quickly;schnell;adv.;A1;
+quiet;leise / ruhig;adj.;A1;
+quite;ziemlich;adv.;A1;
+radio;Radio;n.;A1;
+rain;Regen / regnen;n., v.;A1;
+read;lesen;v.;A1;
+reader;Leser:in;n.;A1;
+reading;Lesen / Lektüre;n.;A1;
+ready;bereit / fertig;adj.;A1;
+real;echt / real;adj.;A1;
+really;wirklich;adv.;A1;
+reason;Grund;n.;A1;
+red;rot;adj., n.;A1;
+relax;entspannen;v.;A1;
+remember;sich erinnern;v.;A1;
+repeat;wiederholen;v.;A1;
+report;Bericht / berichten;n.;A1;
+restaurant;Restaurant;n.;A1;
+result;Ergebnis / Resultat;n.;A1;
+return;zurückkehren / Rückkehr;v., n.;A1;
+rice;Reis;n.;A1;
+rich;reich;adj.;A1;
+ride;reiten / fahren;v.;A1;
+right;richtig / rechts;adj., adv., n.;A1;
+river;Fluss;n.;A1;
+road;Straße;n.;A1;
+room;Zimmer / Raum;n.;A1;
+routine;Routine;n.;A1;
+rule;Regel / regieren;n.;A1;
+run;laufen / rennen;v.;A1;
+sad;traurig;adj.;A1;
+salad;Salat;n.;A1;
+salt;Salz;n.;A1;
+same;gleich / derselbe;adj., pron., adv.;A1;
+sandwich;Sandwich;n.;A1;
+Saturday;Samstag;n.;A1;
+say;sagen;v.;A1;
+school;Schule;n.;A1;
+science;Wissenschaft;n.;A1;
+scientist;Wissenschaftler:in;n.;A1;
+sea;Meer / See (das);n.;A1;
+second (unit of time);Sekunde;n.;A1;
+section;Abschnitt;n.;A1;
+see;sehen;v.;A1;
+sell;verkaufen;v.;A1;
+send;senden / schicken;v.;A1;
+sentence;Satz;n.;A1;
+September;September;n.;A1;
+seven;sieben;number;A1;
+seventeen;siebzehn;number;A1;
+seventy;siebzig;number;A1;
+share;teilen;v.;A1;
+she;sie;pron.;A1;
+sheep;Schaf;n.;A1;
+shirt;Hemd;n.;A1;
+shoe;Schuh;n.;A1;
+shop;Geschäft / Laden;n., v.;A1;
+shopping;Einkaufen;n.;A1;
+short;kurz;adj.;A1;
+should;sollte;modal v.;A1;
+show;zeigen / Show;v., n.;A1;
+shower;Dusche;n.;A1;
+sick;krank;adj.;A1;
+similar;ähnlich;adj.;A1;
+sing;singen;v.;A1;
+singer;Sänger:in;n.;A1;
+sister;Schwester;n.;A1;
+sit;sitzen;v.;A1;
+situation;Situation / Lage;n.;A1;
+six;sechs;number;A1;
+sixteen;sechzehn;number;A1;
+sixty;sechzig;number;A1;
+skill;Fähigkeit / Kompetenz;n.;A1;
+skirt;Rock;n.;A1;
+sleep;schlafen;v.;A1;
+slow;langsam;adj.;A1;
+small;klein;adj.;A1;
+snake;Schlange;n.;A1;
+snow;Schnee / schneien;n., v.;A1;
+so;so / also;adv., conj.;A1;
+some;einige / etwas;det., pron.;A1;
+somebody;jemand;pron.;A1;
+someone;jemand;pron.;A1;
+something;etwas;pron.;A1;
+sometimes;manchmal;adv.;A1;
+son;Sohn;n.;A1;
+song;Lied;n.;A1;
+soon;bald;adv.;A1;
+sorry;Entschuldigung / leid;adj., exclam.;A1;
+sound;Geräusch / klingen;n., v.;A1;
+soup;Suppe;n.;A1;
+south;Süden;n., adj., adv.;A1;
+space;Raum / Weltraum;n.;A1;
+speak;sprechen;v.;A1;
+special;besonders / Spezial-;adj.;A1;
+spell;buchstabieren;v.;A1;
+spelling;Rechtschreibung;n.;A1;
+spend;ausgeben / verbringen;v.;A1;
+sport;Sport;n.;A1;
+spring;Frühling / Quelle;n.;A1;
+stand;stehen;v.;A1;
+star;Stern / Star;n.;A1;
+start;Start / starten;v.;A1;
+statement;Aussage / Erklärung;n.;A1;
+station;Bahnhof / Station;n.;A1;
+stay;bleiben;v.;A1;
+still;noch / still;adv.;A1;
+stop;anhalten / Haltestelle;v., n.;A1;
+story;Geschichte / Erzählung;n.;A1;
+street;Straße;n.;A1;
+strong;stark;adj.;A1;
+student;Schüler:in / Student:in;n.;A1;
+study;lernen / Studium;n., v.;A1;
+style;Stil;n.;A1;
+subject;Fach / Thema;n.;A1;
+success;Erfolg;n.;A1;
+sugar;Zucker;n.;A1;
+summer;Sommer;n.;A1;
+sun;Sonne;n.;A1;
+Sunday;Sonntag;n.;A1;
+supermarket;Supermarkt;n.;A1;
+sure;sicher;adj.;A1;
+sweater;Pullover;n.;A1;
+swim;schwimmen;v.;A1;
+swimming;Schwimmen;n.;A1;
+table;Tisch;n.;A1;
+take;nehmen;v.;A1;
+talk;reden / Gespräch;v.;A1;
+tall;groß (Person);adj.;A1;
+taxi;Taxi;n.;A1;
+tea;Tee;n.;A1;
+teach;unterrichten;v.;A1;
+teacher;Lehrer:in;n.;A1;
+team;Team / Mannschaft;n.;A1;
+teenager;Teenager / Jugendliche:r;n.;A1;
+telephone;Telefon;n., v.;A1;
+television;Fernseher / Fernsehen;n.;A1;
+tell;erzählen / sagen;v.;A1;
+ten;zehn;number;A1;
+tennis;Tennis;n.;A1;
+terrible;schrecklich;adj.;A1;
+test;Test / testen;n., v.;A1;
+text;Text / SMS schreiben;n.;A1;
+than;als (Vergleich);conj.;A1;
+thank;danken;v.;A1;
+thanks;Danke;exclam., n.;A1;
+that;das / dass;det., pron., conj.;A1;
+the;der / die / das;definite article;A1;
+theatre;Theater;n.;A1;
+their;ihr (Plural);det.;A1;
+them;sie / ihnen;pron.;A1;
+then;dann;adv.;A1;
+there;dort / da;adv.;A1;
+they;sie (Plural);pron.;A1;
+thing;Sache / Ding;n.;A1;
+think;denken;v.;A1;
+third;dritte:r;number;A1;
+thirsty;durstig;adj.;A1;
+thirteen;dreizehn;number;A1;
+thirty;dreißig;number;A1;
+thousand;tausend;number;A1;
+three;drei;number;A1;
+through;durch;prep., adv.;A1;
+Thursday;Donnerstag;n.;A1;
+ticket;Ticket / Fahrkarte;n.;A1;
+time;Zeit;n.;A1;
+tired;müde;adj.;A1;
+title;Titel;n.;A1;
+today;heute;adv., n.;A1;
+together;zusammen;adv.;A1;
+toilet;Toilette;n.;A1;
+tomato;Tomate;n.;A1;
+tomorrow;morgen (Tag);adv., n.;A1;
+tonight;heute Abend;adv., n.;A1;
+too;zu / auch;adv.;A1;
+tooth;Zahn;n.;A1;
+topic;Thema;n.;A1;
+tourist;Tourist:in;n.;A1;
+town;Stadt / Kleinstadt;n.;A1;
+traffic;Verkehr;n.;A1;
+train;Zug / trainieren;n.;A1;
+travel;reisen / Reise;v., n.;A1;
+tree;Baum;n.;A1;
+trip;Reise / Ausflug;n.;A1;
+trousers;Hose;n.;A1;
+true;wahr;adj.;A1;
+try;versuchen;v.;A1;
+T-shirt;T-Shirt;n.;A1;
+Tuesday;Dienstag;n.;A1;
+turn;drehen / Wendung;v., n.;A1;
+TV;Fernseher;n.;A1;
+twelve;zwölf;number;A1;
+twenty;zwanzig;number;A1;
+twice;zweimal;adv.;A1;
+two;zwei;number;A1;
+type;Art / tippen;n.;A1;
+umbrella;Regenschirm;n.;A1;
+uncle;Onkel;n.;A1;
+under;unter;prep., adv.;A1;
+understand;verstehen;v.;A1;
+university;Universität;n.;A1;
+up;hinauf / oben;adv., prep.;A1;
+upstairs;oben (Stockwerk);adv.;A1;
+us;uns;pron.;A1;
+use;benutzen;v.;A1;
+useful;nützlich;adj.;A1;
+usually;normalerweise;adv.;A1;
+vacation;Urlaub / Ferien;n.;A1;
+vegetable;Gemüse;n.;A1;
+very;sehr;adv.;A1;
+video;Video;n.;A1;
+village;Dorf;n.;A1;
+visit;besuchen / Besuch;v., n.;A1;
+visitor;Besucher:in;n.;A1;
+wait;warten;v.;A1;
+waiter;Kellner;n.;A1;
+wake;aufwachen;v.;A1;
+walk;gehen / Spaziergang;v., n.;A1;
+wall;Wand / Mauer;n.;A1;
+want;wollen;v.;A1;
+warm;warm;adj.;A1;
+wash;waschen;v.;A1;
+watch;anschauen / Uhr;v., n.;A1;
+water;Wasser;n.;A1;
+way;Weg / Art;n.;A1;
+we;wir;pron.;A1;
+wear;tragen (Kleidung);v.;A1;
+weather;Wetter;n.;A1;
+website;Webseite;n.;A1;
+Wednesday;Mittwoch;n.;A1;
+week;Woche;n.;A1;
+weekend;Wochenende;n.;A1;
+welcome;willkommen;exclam., v., adj.;A1;
+well;gut / nun;adv., adj., exclam.;A1;
+west;Westen;n., adj., adv.;A1;
+when;wann / wenn;adv., pron., conj.;A1;
+where;wo / wohin;adv., conj.;A1;
+white;weiß;adj., n.;A1;
+who;wer;pron.;A1;
+why;warum;adv.;A1;
+wife;Ehefrau;n.;A1;
+will;werden (Futur);modal v.;A1;
+win;gewinnen;v.;A1;
+window;Fenster;n.;A1;
+wine;Wein;n.;A1;
+winter;Winter;n.;A1;
+with;mit;prep.;A1;
+without;ohne;prep.;A1;
+woman;Frau;n.;A1;
+wonderful;wunderbar;adj.;A1;
+word;Wort;n.;A1;
+work;arbeiten / Arbeit;v., n.;A1;
+worker;Arbeiter:in;n.;A1;
+world;Welt;n.;A1;
+would;würde;modal v.;A1;
+write;schreiben;v.;A1;
+writer;Schriftsteller:in;n.;A1;
+writing;Schrift / Schreiben;n.;A1;
+wrong;falsch;adj.;A1;
+yeah;ja (umgangssprachlich);exclam.;A1;
+year;Jahr;n.;A1;
+yellow;gelb;adj., n.;A1;
+yes;ja;exclam.;A1;
+yesterday;gestern;adv., n.;A1;
+you;du / Sie;pron.;A1;
+young;jung;adj.;A1;
+your;dein / Ihr;det.;A1;
+yourself;dich selbst;pron.;A1;
+  </script>
+
+  <script>
+  /* ============================================================
+     WORTGOLD — Vanilla JS, single file PWA
+     Englisch-Vokabeltrainer
+     Leitner-System (5 Fächer, 1/2/4/8/16 Tage)
+     ============================================================ */
+
+  // ---- Vocab data ---------------------------------------------------------
+  // Decks liegen als CSV unter decks/cefr-{a1,a2,b1,b2,c1}.csv.
+  // Schema:  wort ; übersetzung ; wortart ; niveau ; thema
+  //   Trennzeichen: Semikolon, Komma oder Tab (auto-erkannt)
+  //   Header (wort;übersetzung;...) wird automatisch übersprungen
+  //   Zeilen mit # am Anfang sind Kommentare
+  //
+  // Jeder Eintrag in VOCAB ist [wort, übersetzung, wortart, niveau, thema]
+  // — aber alle Stellen, die nur die ersten beiden Spalten lesen
+  //  (`const [term, def] = …`) funktionieren weiter ohne Anpassung.
+  // -------------------------------------------------------------------------
+  const DECKS = ["A1", "A2", "B1", "B2", "C1"];
+  let VOCAB = [];
+
+  function parseVocabCSV(text, defaultLevel) {
+    const lines = text.replace(/\r/g, "").split("\n");
+    const out = [];
+    let headerSeen = false;
+    for (const raw of lines) {
+      const line = raw.trim();
+      if (!line || line.startsWith("#")) continue;
+      const sep = line.includes(";") ? ";" : (line.includes("\t") ? "\t" : ",");
+      if (!headerSeen) {
+        headerSeen = true;
+        if (/^(wort|fr|word|en)\s*[;,\t]/i.test(line)) continue;
+      }
+      const parts = line.split(sep).map(s => s.trim());
+      if (parts.length < 2) continue;
+      const word = parts[0], translation = parts[1];
+      if (!word || !translation) continue;
+      const wortart = parts[2] || "";
+      const niveau  = parts[3] || defaultLevel || "";
+      const thema   = parts[4] || "";
+      out.push([word, translation, wortart, niveau, thema]);
+    }
+    return out;
+  }
+
+  // 1. Sofort aus inline-Fallback laden (für lokalen file://-Test)
+  (function loadInline() {
+    const el = document.getElementById("vocab-csv");
+    if (el && el.textContent) VOCAB = parseVocabCSV(el.textContent, "A1");
+  })();
+
+  // 2. Pro Niveau eine CSV nachladen und mergen
+  function loadVocab() {
+    const promises = DECKS.map(level =>
+      fetch("decks/cefr-" + level.toLowerCase() + ".csv", { cache: "no-cache" })
+        .then(r => r.ok ? r.text() : Promise.reject(r.status))
+        .then(txt => parseVocabCSV(txt, level))
+        .catch(() => [])
+    );
+    return Promise.all(promises).then(results => {
+      const merged = [].concat(...results);
+      if (merged.length) {
+        VOCAB = merged;
+        if (typeof renderHome === "function") renderHome();
+      }
+    });
+  }
+  loadVocab();
+
+  // ---- Constants ----
+  const LEVELS = [
+    { name: "Lehrling",       xp: 0 },
+    { name: "Geselle",        xp: 50 },
+    { name: "Hofdichter",     xp: 150 },
+    { name: "Wortmeister",    xp: 350 },
+    { name: "Bibliothekar",   xp: 700 },
+    { name: "Goldschmied",    xp: 1500 },
+    { name: "Großmeister",    xp: 3000 },
+  ];
+
+  // Box -> Tage Wartezeit
+  const BOX_DAYS = { 1: 1, 2: 2, 3: 4, 4: 8, 5: 16 };
+  const BOX_COLORS = ["", "var(--b1)", "var(--b2)", "var(--b3)", "var(--b4)", "var(--b5)"];
+
+  const DAY_MS = 24 * 60 * 60 * 1000;
+
+  // ---- State ----
+  const STORAGE_KEY = "wortgold-v1";
+  const LEGACY_KEY = "wortgold-legacy";
+
+  function loadState() {
+    try {
+      let raw = localStorage.getItem(STORAGE_KEY);
+      // One-time migration from previous app name
+      if (!raw) {
+        const legacy = localStorage.getItem(LEGACY_KEY);
+        if (legacy) {
+          raw = legacy;
+          try { localStorage.setItem(STORAGE_KEY, legacy); localStorage.removeItem(LEGACY_KEY); } catch (e) {}
+        }
+      }
+      if (!raw) return defaultState();
+      const s = JSON.parse(raw);
+      // Migrate / fill missing fields
+      if (!s.cards) s.cards = {};
+      if (!s.stats) s.stats = { totalReviews: 0, xp: 0, streak: 0, bestStreak: 0, lastSessionDate: null, history: {} };
+      if (!s.stats.history) s.stats.history = {};
+      if (!s.settings) s.settings = { dailyLimit: 20, sound: true, order: "abc", direction: "la-de", theme: "system", levels: ["A1"] };
+      if (!s.settings.direction) s.settings.direction = "la-de";
+      if (!s.settings.theme) s.settings.theme = "system";
+      if (!s.settings.levels || !s.settings.levels.length) s.settings.levels = ["A1"];
+      return s;
+    } catch (e) {
+      return defaultState();
+    }
+  }
+  function defaultState() {
+    return {
+      cards: {},  // term -> { box, lastReview, nextDue, correct, wrong }
+      stats: { totalReviews: 0, xp: 0, streak: 0, bestStreak: 0, lastSessionDate: null, history: {} },
+      settings: { dailyLimit: 20, sound: true, order: "abc", direction: "la-de", theme: "system", levels: ["A1"] },
+    };
+  }
+
+  function applyTheme(theme) {
+    const root = document.documentElement;
+    root.classList.remove("dark", "light");
+    if (theme === "dark") root.classList.add("dark");
+    else if (theme === "light") root.classList.add("light");
+    // theme === "system": no class — media query handles it
+
+    // Update browser status bar color to match
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      const isDark = theme === "dark" ||
+        (theme === "system" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      meta.setAttribute("content", isDark ? "#1a140d" : "#faf6ee");
+    }
+  }
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  let state = loadState();
+  applyTheme(state.settings.theme || "system");
+
+  // Today's date as YYYY-MM-DD (local time)
+  function todayKey() {
+    const d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+
+  // ---- Sound (Web Audio API) ----
+  let audioCtx = null;
+  function beep(freq, dur, vol = 0.06, type = "sine") {
+    if (!state.settings.sound) return;
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = type;
+      o.frequency.value = freq;
+      g.gain.value = vol;
+      g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start();
+      o.stop(audioCtx.currentTime + dur);
+    } catch (e) {}
+  }
+  const sfx = {
+    flip:   () => beep(420, .08, .04),
+    easy:   () => { beep(660, .08); setTimeout(() => beep(990, .14), 70); },
+    mid:    () => beep(520, .14, .05, "triangle"),
+    hard:   () => beep(180, .22, .07, "sawtooth"),
+    levelup:() => { beep(523, .12); setTimeout(() => beep(659, .12), 100); setTimeout(() => beep(784, .22), 200); },
+    done:   () => { beep(587, .1); setTimeout(() => beep(740, .1), 90); setTimeout(() => beep(880, .2), 180); },
+  };
+
+  // ---- Leitner core ----
+  function getCardState(term) {
+    return state.cards[term] || null;
+  }
+  function isDue(c, now = Date.now()) {
+    return c && c.nextDue <= now;
+  }
+  function rateCard(term, rating) {
+    // rating: 0 = wrong, 1 = unsure (stay), 2 = easy (advance)
+    const now = Date.now();
+    let c = state.cards[term];
+    if (!c) c = { box: 1, correct: 0, wrong: 0, lastReview: 0, nextDue: 0 };
+    let prevBox = c.box;
+    if (rating === 0) {
+      c.box = 1;
+      c.wrong = (c.wrong || 0) + 1;
+    } else if (rating === 1) {
+      // stay; small increment
+      c.correct = (c.correct || 0) + 1;
+    } else if (rating === 2) {
+      c.box = Math.min(5, (c.box || 1) + 1);
+      c.correct = (c.correct || 0) + 1;
+    }
+    c.lastReview = now;
+    c.nextDue = now + BOX_DAYS[c.box] * DAY_MS;
+    state.cards[term] = c;
+    state.stats.totalReviews = (state.stats.totalReviews || 0) + 1;
+    if (rating === 2) state.stats.xp = (state.stats.xp || 0) + 1;
+    // Tageshistorie: Anzahl Karten pro Tag (für Heatmap)
+    if (!state.stats.history) state.stats.history = {};
+    const tk = todayKey();
+    state.stats.history[tk] = (state.stats.history[tk] || 0) + 1;
+    return { prevBox, newBox: c.box };
+  }
+
+  // Aktive Niveaus aus Settings ziehen — Filter für Sessions
+  function activeLevelsSet() {
+    const lv = (state.settings && state.settings.levels) || ["A1"];
+    return new Set(lv);
+  }
+  function vocabInActiveLevels() {
+    const set = activeLevelsSet();
+    return VOCAB.filter(v => !v[3] || set.has(v[3]));
+  }
+
+  function buildSession() {
+    const now = Date.now();
+    const limit = state.settings.dailyLimit || 20;
+    const order = state.settings.order || "abc";
+    const pool = vocabInActiveLevels();
+
+    // 1. Due cards (lowest box first → most urgent learners), then sort by nextDue
+    const dueCards = [];
+    for (const v of pool) {
+      const c = state.cards[v[0]];
+      if (c && c.box <= 5 && isDue(c, now)) {
+        dueCards.push(v);
+      }
+    }
+    dueCards.sort((a, b) => {
+      const ca = state.cards[a[0]], cb = state.cards[b[0]];
+      if (ca.box !== cb.box) return ca.box - cb.box;
+      return ca.nextDue - cb.nextDue;
+    });
+
+    // 2. New cards (never seen)
+    const newCards = pool.filter(v => !state.cards[v[0]]);
+    if (order === "random") {
+      shuffle(newCards);
+    }
+
+    const session = [];
+    for (const c of dueCards) {
+      if (session.length >= limit) break;
+      session.push(c);
+    }
+    for (const c of newCards) {
+      if (session.length >= limit) break;
+      session.push(c);
+    }
+    if (order === "random") shuffle(session);
+    return session;
+  }
+
+  // Üben-Modus: zufällig aus den aktiven Niveaus, ohne Leitner-Effekt
+  function buildPracticeSession(n) {
+    const all = vocabInActiveLevels().slice();
+    shuffle(all);
+    return all.slice(0, Math.min(n, all.length));
+  }
+
+  function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+  }
+
+  // ---- Stats helpers ---- (filtered by active levels)
+  function countByBox() {
+    const c = { 1:0, 2:0, 3:0, 4:0, 5:0 };
+    for (const v of vocabInActiveLevels()) {
+      const cs = state.cards[v[0]];
+      if (cs && cs.box >= 1 && cs.box <= 5) c[cs.box]++;
+    }
+    return c;
+  }
+  function countDue() {
+    const now = Date.now();
+    let n = 0;
+    for (const v of vocabInActiveLevels()) {
+      const cs = state.cards[v[0]];
+      if (cs && isDue(cs, now)) n++;
+    }
+    return n;
+  }
+  function countNew() {
+    let n = 0;
+    for (const v of vocabInActiveLevels()) if (!state.cards[v[0]]) n++;
+    return n;
+  }
+  function countMastered() {
+    let n = 0;
+    for (const v of vocabInActiveLevels()) {
+      const cs = state.cards[v[0]];
+      if (cs && cs.box === 5) n++;
+    }
+    return n;
+  }
+
+  // Level helpers
+  function levelForXp(xp) {
+    let i = 0;
+    for (let j = 0; j < LEVELS.length; j++) {
+      if (xp >= LEVELS[j].xp) i = j;
+    }
+    return i;
+  }
+  function levelInfo(xp) {
+    const idx = levelForXp(xp);
+    const cur = LEVELS[idx];
+    const next = LEVELS[idx + 1] || null;
+    if (!next) {
+      return { idx, name: cur.name, xpInLevel: xp - cur.xp, xpForLevel: 1, pct: 100, nextName: null };
+    }
+    const xpInLevel = xp - cur.xp;
+    const xpForLevel = next.xp - cur.xp;
+    return {
+      idx,
+      name: cur.name,
+      xpInLevel, xpForLevel,
+      pct: Math.min(100, Math.round(xpInLevel / xpForLevel * 100)),
+      nextName: next.name,
+      xpToNext: next.xp - xp,
+    };
+  }
+
+  // Streak logic
+  function updateStreakOnSession() {
+    const t = todayKey();
+    const last = state.stats.lastSessionDate;
+    if (last === t) return; // already counted today
+    if (last) {
+      const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+      const yKey = yesterday.getFullYear() + "-" + String(yesterday.getMonth() + 1).padStart(2, "0") + "-" + String(yesterday.getDate()).padStart(2, "0");
+      if (last === yKey) {
+        state.stats.streak = (state.stats.streak || 0) + 1;
+      } else {
+        state.stats.streak = 1;
+      }
+    } else {
+      state.stats.streak = 1;
+    }
+    state.stats.bestStreak = Math.max(state.stats.bestStreak || 0, state.stats.streak);
+    state.stats.lastSessionDate = t;
+  }
+
+  // ---- Heatmap rendering ----
+  function dateKeyForOffset(daysAgo) {
+    const d = new Date();
+    d.setDate(d.getDate() - daysAgo);
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+  function heatColorFor(v) {
+    if (!v || v === 0) {
+      try { return getComputedStyle(document.documentElement).getPropertyValue("--heat-empty").trim() || "#f1efe8"; }
+      catch (e) { return "#f1efe8"; }
+    }
+    const isDark = document.documentElement.classList.contains("dark") ||
+      (!document.documentElement.classList.contains("light") &&
+       window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    if (isDark) {
+      if (v <= 4)  return "#3d2f1c";
+      if (v <= 9)  return "#6e5722";
+      if (v <= 14) return "#b8862b";
+      if (v <= 19) return "#d9a93a";
+      return "#f4e8c8";
+    }
+    if (v <= 4)  return "#f0e3bc";
+    if (v <= 9)  return "#e0c574";
+    if (v <= 14) return "#d9a93a";
+    if (v <= 19) return "#b8862b";
+    return "#8d6520";
+  }
+  function renderHeatmap() {
+    const grid = document.getElementById("heat-grid");
+    if (!grid) return;
+    const hist = (state.stats && state.stats.history) || {};
+    grid.innerHTML = "";
+    const today = todayKey();
+    let totalCards = 0;
+    let activeDays = 0;
+    let currentStreak = 0;
+    let stillStreak = true;
+    // Build cells: oldest (29 days ago) first, today last
+    for (let i = 29; i >= 0; i--) {
+      const k = dateKeyForOffset(i);
+      const v = hist[k] || 0;
+      const c = document.createElement("div");
+      c.className = "heat-cell";
+      c.style.background = heatColorFor(v);
+      if (k === today) c.classList.add("today");
+      const dateLabel = new Date();
+      dateLabel.setDate(dateLabel.getDate() - i);
+      c.title = dateLabel.toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" }) + ": " + v + " Karten";
+      grid.appendChild(c);
+      totalCards += v;
+      if (v > 0) activeDays++;
+    }
+    // Current streak: count consecutive non-zero days back from today (allow today=0, but only stop at first 0 before today)
+    for (let i = 0; i < 30; i++) {
+      const k = dateKeyForOffset(i);
+      const v = hist[k] || 0;
+      if (v > 0) currentStreak++;
+      else if (i === 0) continue; // today not learned yet — streak from yesterday counts
+      else break;
+    }
+    document.getElementById("heat-meta").textContent = currentStreak > 0
+      ? currentStreak + (currentStreak === 1 ? " Tag in Folge" : " Tage in Folge")
+      : "Heute neu starten";
+    document.getElementById("heat-stats").innerHTML =
+      "<strong>" + totalCards + "</strong> Karten · <strong>" + activeDays + "</strong> aktive Tage";
+    const best = (state.stats && state.stats.bestStreak) || 0;
+    const bestEl = document.getElementById("heat-best");
+    if (best > 0) {
+      bestEl.style.display = "inline-block";
+      bestEl.textContent = "Bestleistung " + best + " Tage";
+    } else {
+      bestEl.style.display = "none";
+    }
+  }
+
+  // ---- Rendering: HOME ----
+  function renderHome() {
+    const due = countDue();
+    const fresh = countNew();
+    const mastered = countMastered();
+    const boxes = countByBox();
+    const li = levelInfo(state.stats.xp || 0);
+
+    // Show direction in the brand sub
+    const brandSub = document.getElementById("brand-sub-text");
+    if (brandSub) brandSub.textContent = directionLabel(state.settings.direction || "la-de");
+
+    document.getElementById("level-name").textContent = li.name;
+    if (li.nextName) {
+      document.getElementById("level-xp").textContent =
+        li.xpInLevel + " / " + li.xpForLevel + " XP";
+      document.getElementById("next-level").textContent = "Nächste Stufe: " + li.nextName;
+    } else {
+      document.getElementById("level-xp").textContent = (state.stats.xp || 0) + " XP";
+      document.getElementById("next-level").textContent = "Höchste Stufe erreicht";
+    }
+    document.getElementById("level-bar").style.width = li.pct + "%";
+
+    // First-session onboarding: show welcome card, hide empty heatmap card
+    const isFirstSession = !state.stats.totalReviews;
+    document.getElementById("welcome-card").style.display = isFirstSession ? "block" : "none";
+    document.getElementById("heat-card").style.display = isFirstSession ? "none" : "block";
+
+    document.getElementById("stat-due").textContent = due;
+    document.getElementById("stat-new").textContent = fresh;
+    document.getElementById("stat-mastered").textContent = mastered;
+
+    document.getElementById("b-1").textContent = boxes[1];
+    document.getElementById("b-2").textContent = boxes[2];
+    document.getElementById("b-3").textContent = boxes[3];
+    document.getElementById("b-4").textContent = boxes[4];
+    document.getElementById("b-5").textContent = boxes[5];
+
+    // Start button: show actual session size
+    const sess = buildSession();
+    const startBtn = document.getElementById("btn-start");
+    const label = document.getElementById("start-btn-label");
+    const sub = document.getElementById("start-btn-sub");
+    if (sess.length === 0) {
+      label.textContent = "Tagesplan erfüllt 🎉";
+      sub.textContent = "Morgen warten neue Karten";
+      startBtn.disabled = true;
+    } else {
+      label.textContent = "Lernen starten";
+      sub.textContent = sess.length + " Karten in dieser Session";
+      startBtn.disabled = false;
+    }
+
+    // Heatmap der letzten 30 Tage
+    renderHeatmap();
+    renderGoalRing();
+  }
+
+  // ---- Daily goal ring ----
+  function renderGoalRing() {
+    const goal = state.settings.dailyLimit || 20;
+    const today = (state.stats && state.stats.history && state.stats.history[todayKey()]) || 0;
+    const progress = Math.min(today / goal, 1);
+    const C = 213.6; // 2*pi*r where r=34
+    const fill = document.getElementById("goal-ring-fill");
+    const txt  = document.getElementById("goal-progress");
+    const hint = document.getElementById("goal-hint");
+    const card = document.getElementById("goal-card");
+    if (fill) fill.setAttribute("stroke-dashoffset", C * (1 - progress));
+    if (txt)  txt.textContent = today + " / " + goal + " heute";
+    if (today >= goal) {
+      if (hint) hint.textContent = "Tagesziel geknackt — Goldgriff! 🎉";
+      if (card) card.classList.add("complete");
+    } else {
+      if (hint) hint.textContent = (goal - today) + " Karten bis zur Tagesfanfare";
+      if (card) card.classList.remove("complete");
+    }
+  }
+
+  // ---- Session state ----
+  let session = null;          // array of [term, def] cards
+  let sessionIdx = 0;
+  let sessionResults = { easy: 0, mid: 0, hard: 0, xpStart: 0, levelStart: 0 };
+  let currentFlipped = false;
+  let canRate = false;
+
+  // ---- Rendering: REVIEW ----
+  let practiceMode = false;
+
+  function startSession() {
+    session = buildSession();
+    if (!session.length) return;
+    sessionIdx = 0;
+    practiceMode = false;
+    sessionResults = { easy: 0, mid: 0, hard: 0, xpStart: state.stats.xp || 0, levelStart: levelForXp(state.stats.xp || 0) };
+    comboCount = 0;
+    if (comboPill) comboPill.classList.remove("shown", "bump");
+    showScreen("review");
+    renderCard();
+  }
+
+  function startPractice() {
+    if (!VOCAB.length) return;
+    const limit = state.settings.dailyLimit || 20;
+    session = buildPracticeSession(limit);
+    if (!session.length) return;
+    sessionIdx = 0;
+    practiceMode = true;
+    sessionResults = { easy: 0, mid: 0, hard: 0, xpStart: state.stats.xp || 0, levelStart: levelForXp(state.stats.xp || 0) };
+    comboCount = 0;
+    if (comboPill) comboPill.classList.remove("shown", "bump");
+    showScreen("review");
+    renderCard();
+  }
+
+  // Determine effective direction for the current card
+  function effectiveDirection() {
+    const d = state.settings.direction || "la-de";
+    if (d === "mixed") {
+      return Math.random() < 0.5 ? "la-de" : "de-la";
+    }
+    return d;
+  }
+  let currentDirection = "la-de";
+
+  function renderCard() {
+    if (sessionIdx >= session.length) {
+      finishSession();
+      return;
+    }
+    const entry = session[sessionIdx];
+    const [term, def] = entry;
+    const wortart = entry[2] || "";
+    const niveau  = entry[3] || "";
+    const cs = getCardState(term);
+    const box = cs ? cs.box : 1;
+    const boxColor = BOX_COLORS[box];
+    const boxLabel = cs ? "Fach " + box : "Neu";
+    const dotColor = cs ? boxColor : "var(--muted)";
+
+    // Wortart + Niveau-Pillen vorbereiten
+    const badgeHtml = (wortart || niveau) ?
+      '<div style="margin-top:14px">'
+        + (wortart ? '<span class="pos-badge">' + wortart + '</span>' : '')
+        + (niveau  ? '<span class="level-badge">' + niveau + '</span>'  : '')
+      + '</div>' : '';
+
+    // Pick direction for this card (random if "mixed")
+    currentDirection = effectiveDirection();
+
+    const setTermHtml = (id, content, italic) => {
+      const el = document.getElementById(id);
+      el.textContent = content;
+      el.style.fontStyle = italic ? "italic" : "normal";
+    };
+    const setBadges = (id) => {
+      // Append/replace badges in a sibling container
+      const el = document.getElementById(id);
+      let bx = el.parentElement.querySelector('.term-badges');
+      if (!bx) {
+        bx = document.createElement('div');
+        bx.className = 'term-badges';
+        el.parentElement.insertBefore(bx, el.nextSibling);
+      }
+      bx.innerHTML = badgeHtml;
+    };
+
+    if (currentDirection === "la-de") {
+      // Englisch vorne, Deutsch hinten
+      document.getElementById("card-front-label").textContent = "English";
+      document.getElementById("card-back-label").textContent = "Deutsch";
+      setTermHtml("card-term", term, true);
+      setBadges("card-term");
+      setTermHtml("card-term-back", term, true);
+      setTermHtml("card-def", def, false);
+    } else {
+      // Deutsch vorne, Englisch hinten
+      document.getElementById("card-front-label").textContent = "Deutsch";
+      document.getElementById("card-back-label").textContent = "English";
+      setTermHtml("card-term", def, false);
+      setBadges("card-term");
+      setTermHtml("card-term-back", def, false);
+      setTermHtml("card-def", term, true);
+    }
+
+    document.getElementById("card-box-front").innerHTML =
+      '<span class="dot" style="background:' + dotColor + '"></span><span>' + boxLabel + '</span>';
+    document.getElementById("card-box-back").innerHTML =
+      '<span class="dot" style="background:' + dotColor + '"></span><span>' + boxLabel + '</span>';
+
+    const card = document.getElementById("card");
+    card.classList.remove("flipped");
+    currentFlipped = false;
+    canRate = false;
+    document.getElementById("rate-row").classList.add("disabled");
+
+    const total = session.length;
+    document.getElementById("r-counter").textContent = (sessionIdx + 1) + " / " + total;
+    document.getElementById("r-progress").style.width = (sessionIdx / total * 100) + "%";
+
+    // TTS speakers: speaker is on the side that shows the French word
+    // currentDirection "la-de" -> French on FRONT; "de-la" -> French on BACK
+    const speakerFront = document.getElementById("speaker-front");
+    const speakerBack  = document.getElementById("speaker-back");
+    if (currentDirection === "la-de") {
+      speakerFront.style.display = "grid";
+      speakerBack.style.display  = "none";
+    } else {
+      speakerFront.style.display = "none";
+      speakerBack.style.display  = "grid";
+    }
+  }
+
+  // ---- TTS (French speech synthesis) ----
+  let frVoice = null;
+  function pickFrenchVoice() {
+    if (!("speechSynthesis" in window)) return null;
+    const voices = window.speechSynthesis.getVoices() || [];
+    // Prefer fr-FR, then any fr-*
+    return voices.find(v => v.lang === "en-US")
+        || voices.find(v => v.lang && v.lang.toLowerCase().startsWith("fr"))
+        || null;
+  }
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.onvoiceschanged = () => { frVoice = pickFrenchVoice(); };
+  }
+  function speakFR(text, btn) {
+    if (!("speechSynthesis" in window) || !text) return;
+    try {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      if (!frVoice) frVoice = pickFrenchVoice();
+      if (frVoice) u.voice = frVoice;
+      u.lang = "en-US";
+      u.rate = 0.95;
+      u.pitch = 1.0;
+      u.onstart = () => { if (btn) btn.classList.add("playing"); };
+      u.onend   = () => { if (btn) btn.classList.remove("playing"); };
+      u.onerror = () => { if (btn) btn.classList.remove("playing"); };
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function autoSpeakFR(text) {
+    // Auto-speak only if French is on the front and sound is on
+    if (!state.settings.sound) return;
+    setTimeout(() => speakFR(text, document.getElementById("speaker-front")), 250);
+  }
+  document.getElementById("speaker-front").addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (!session) return;
+    const [term, def] = session[sessionIdx];
+    const fr = currentDirection === "la-de" ? term : term; // French is the source word
+    speakFR(fr, e.currentTarget);
+  });
+  document.getElementById("speaker-back").addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (!session) return;
+    const [term] = session[sessionIdx];
+    speakFR(term, e.currentTarget);
+  });
+
+  function flipCard() {
+    if (currentFlipped) return;
+    document.getElementById("card").classList.add("flipped");
+    currentFlipped = true;
+    canRate = true;
+    document.getElementById("rate-row").classList.remove("disabled");
+    sfx.flip();
+  }
+
+  // ---- Combo counter ----
+  let comboCount = 0;
+  const comboPill = document.getElementById("combo-pill");
+  const comboNum  = document.getElementById("combo-num");
+  function bumpCombo(rating) {
+    if (rating === 2) {
+      comboCount++;
+      if (comboCount >= 3) {
+        comboNum.textContent = comboCount;
+        comboPill.classList.remove("bump"); void comboPill.offsetWidth;
+        comboPill.classList.add("shown", "bump");
+        // Extra haptic on milestone combos
+        if (comboCount === 5 || comboCount === 10 || comboCount % 10 === 0) {
+          try { navigator.vibrate && navigator.vibrate([20, 40, 20]); } catch (e) {}
+        }
+      }
+    } else {
+      comboCount = 0;
+      comboPill.classList.remove("shown", "bump");
+    }
+  }
+
+  function handleRate(rating) {
+    if (!canRate) return;
+    const [term] = session[sessionIdx];
+    if (practiceMode) {
+      // Üben: keine Box-Bewegung, nur XP + Tageshistorie
+      if (rating === 2) state.stats.xp = (state.stats.xp || 0) + 1;
+      state.stats.totalReviews = (state.stats.totalReviews || 0) + 1;
+      if (!state.stats.history) state.stats.history = {};
+      const tk = todayKey();
+      state.stats.history[tk] = (state.stats.history[tk] || 0) + 1;
+    } else {
+      rateCard(term, rating);
+    }
+
+    if (rating === 2) { sessionResults.easy++; sfx.easy(); showFloatingXp("+1 XP"); }
+    else if (rating === 1) { sessionResults.mid++; sfx.mid(); }
+    else { sessionResults.hard++; sfx.hard(); }
+
+    // Combo + Haptik
+    bumpCombo(rating);
+    try { navigator.vibrate && navigator.vibrate(rating === 0 ? 35 : 15); } catch (e) {}
+
+    saveState();
+
+    sessionIdx++;
+    setTimeout(renderCard, 280);
+  }
+
+  function showFloatingXp(text) {
+    const el = document.createElement("div");
+    el.className = "floating-xp";
+    el.textContent = text;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1200);
+  }
+
+  function quitSession() {
+    try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
+    if (comboPill) comboPill.classList.remove("shown", "bump");
+    if (sessionIdx === 0) {
+      showScreen("home");
+      renderHome();
+      return;
+    }
+    finishSession();
+  }
+
+  function finishSession() {
+    if (sessionIdx > 0) {
+      updateStreakOnSession();
+      saveState();
+    }
+    if (comboPill) comboPill.classList.remove("shown", "bump");
+    try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch (e) {}
+
+    // Done screen
+    const total = sessionResults.easy + sessionResults.mid + sessionResults.hard;
+    document.getElementById("done-easy").textContent = sessionResults.easy;
+    document.getElementById("done-mid").textContent = sessionResults.mid;
+    document.getElementById("done-hard").textContent = sessionResults.hard;
+
+    const xpGained = (state.stats.xp || 0) - sessionResults.xpStart;
+    document.getElementById("xp-gained").textContent = "+" + xpGained + " XP";
+
+    if (total === 0) {
+      document.getElementById("done-title").textContent = "Session abgebrochen";
+      document.getElementById("done-sub").textContent = "Keine Karten bewertet";
+    } else {
+      document.getElementById("done-title").textContent = pickFinish(sessionResults);
+      document.getElementById("done-sub").textContent = total + (total === 1 ? " Karte" : " Karten") + " in dieser Session";
+    }
+
+    // Promotion?
+    const newLevel = levelForXp(state.stats.xp || 0);
+    if (newLevel > sessionResults.levelStart) {
+      document.getElementById("promotion-wrap").style.display = "block";
+      document.getElementById("promotion-title").textContent = LEVELS[newLevel].name;
+      sfx.levelup();
+      fireConfetti();
+    } else {
+      document.getElementById("promotion-wrap").style.display = "none";
+      if (total > 0) sfx.done();
+    }
+
+    // Continue button if more cards available
+    const more = countDue() > 0 || countNew() > 0;
+    document.getElementById("btn-continue").style.display = more ? "block" : "none";
+
+    showScreen("done");
+  }
+
+  function pickFinish(r) {
+    const total = r.easy + r.mid + r.hard;
+    if (total === 0) return "Schicht vorbei";
+    const ratio = r.easy / total;
+    if (ratio >= 0.85) return "Stark gelaufen!";
+    if (ratio >= 0.6) return "Gut gemacht";
+    if (ratio >= 0.3) return "Weiter dranbleiben";
+    return "Schwere Runde — nicht aufgeben";
+  }
+
+  function fireConfetti() {
+    const colors = ["#b8862b", "#d9a93a", "#8d6520", "#f4e8c8", "#2f6f57"];
+    for (let i = 0; i < 30; i++) {
+      const el = document.createElement("div");
+      el.className = "confetti";
+      el.style.left = (Math.random() * 100) + "vw";
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.animation = "confetti " + (1.4 + Math.random() * 1.6) + "s linear " + (Math.random() * 0.4) + "s forwards";
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 3500);
+    }
+  }
+
+  // ---- Screen switcher ----
+  function showScreen(name) {
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById("screen-" + name).classList.add("active");
+    window.scrollTo(0, 0);
+  }
+
+  // ---- Settings ----
+  function openSettings() {
+    document.getElementById("sheet-bg").classList.add("open");
+    document.getElementById("sheet").style.display = "block";
+    refreshSettingsChips();
+  }
+  function closeSettings() {
+    document.getElementById("sheet-bg").classList.remove("open");
+    document.getElementById("sheet").style.display = "none";
+  }
+  function refreshSettingsChips() {
+    document.querySelectorAll('#chip-limit .chip').forEach(c => {
+      c.classList.toggle("active", parseInt(c.dataset.limit) === state.settings.dailyLimit);
+    });
+    document.querySelectorAll('#chip-order .chip').forEach(c => {
+      c.classList.toggle("active", c.dataset.order === state.settings.order);
+    });
+    document.querySelectorAll('#chip-direction .chip').forEach(c => {
+      c.classList.toggle("active", c.dataset.direction === state.settings.direction);
+    });
+    document.querySelectorAll('#chip-theme .chip').forEach(c => {
+      c.classList.toggle("active", c.dataset.theme === (state.settings.theme || "system"));
+    });
+    const activeLv = new Set((state.settings.levels) || ["A1"]);
+    document.querySelectorAll('#chip-levels .chip').forEach(c => {
+      c.classList.toggle("active", activeLv.has(c.dataset.level));
+    });
+    document.getElementById("toggle-sound").classList.toggle("on", !!state.settings.sound);
+  }
+
+  // ---- Event wiring ----
+  document.getElementById("btn-start").addEventListener("click", startSession);
+  document.getElementById("btn-quit").addEventListener("click", quitSession);
+  document.getElementById("btn-home").addEventListener("click", () => { showScreen("home"); renderHome(); });
+  document.getElementById("btn-continue").addEventListener("click", () => { startSession(); });
+  document.getElementById("btn-settings").addEventListener("click", openSettings);
+  document.getElementById("sheet-bg").addEventListener("click", closeSettings);
+
+  document.getElementById("card").addEventListener("click", flipCard);
+  document.querySelectorAll(".rate-btn").forEach(b => {
+    b.addEventListener("click", () => handleRate(parseInt(b.dataset.rating)));
+  });
+
+  // Keyboard shortcuts (helpful auf dem Laptop)
+  document.addEventListener("keydown", (e) => {
+    const reviewActive = document.getElementById("screen-review").classList.contains("active");
+    if (!reviewActive) return;
+    if (e.key === " " || e.key === "Enter") { e.preventDefault(); flipCard(); }
+    else if (canRate && (e.key === "1" || e.key === "j")) handleRate(0);
+    else if (canRate && (e.key === "2" || e.key === "k")) handleRate(1);
+    else if (canRate && (e.key === "3" || e.key === "l")) handleRate(2);
+    else if (e.key === "Escape") quitSession();
+  });
+
+  // Settings interactions
+  document.querySelectorAll('#chip-limit .chip').forEach(c => {
+    c.addEventListener("click", () => {
+      state.settings.dailyLimit = parseInt(c.dataset.limit);
+      saveState(); refreshSettingsChips(); renderHome();
+    });
+  });
+  document.querySelectorAll('#chip-order .chip').forEach(c => {
+    c.addEventListener("click", () => {
+      state.settings.order = c.dataset.order;
+      saveState(); refreshSettingsChips(); renderHome();
+    });
+  });
+  document.querySelectorAll('#chip-direction .chip').forEach(c => {
+    c.addEventListener("click", () => {
+      state.settings.direction = c.dataset.direction;
+      saveState(); refreshSettingsChips();
+      // Live-update brand-sub on home screen
+      const brandSub = document.getElementById("brand-sub-text");
+      if (brandSub) brandSub.textContent = directionLabel(state.settings.direction);
+    });
+  });
+  // Niveau-Filter (Multi-Select): Klick toggelt das Niveau in/aus den aktiven
+  document.querySelectorAll('#chip-levels .chip').forEach(c => {
+    c.addEventListener("click", () => {
+      const lv = c.dataset.level;
+      const set = new Set(state.settings.levels || ["A1"]);
+      if (set.has(lv)) {
+        if (set.size > 1) set.delete(lv);  // mind. ein Niveau muss aktiv bleiben
+      } else {
+        set.add(lv);
+      }
+      // sortierte Reihenfolge A1, A2, B1, B2, C1
+      const order = ["A1","A2","B1","B2","C1"];
+      state.settings.levels = order.filter(l => set.has(l));
+      saveState(); refreshSettingsChips(); renderHome();
+    });
+  });
+
+  function directionLabel(d) {
+    if (d === "de-la") return "Deutsch → Englisch";
+    if (d === "mixed") return "English ↔ Deutsch";
+    return "Englisch → Deutsch";
+  }
+  document.getElementById("toggle-sound").addEventListener("click", () => {
+    state.settings.sound = !state.settings.sound;
+    saveState(); refreshSettingsChips();
+  });
+  document.querySelectorAll('#chip-theme .chip').forEach(c => {
+    c.addEventListener("click", () => {
+      state.settings.theme = c.dataset.theme;
+      applyTheme(state.settings.theme);
+      saveState(); refreshSettingsChips();
+      // Re-render heatmap so empty cells pick up the new variable
+      if (typeof renderHeatmap === "function") renderHeatmap();
+    });
+  });
+  // Live-update if user changes system theme while app is open and "system" is selected
+  if (window.matchMedia) {
+    const mql = window.matchMedia("(prefers-color-scheme: dark)");
+    if (mql.addEventListener) mql.addEventListener("change", () => {
+      if ((state.settings.theme || "system") === "system") {
+        applyTheme("system");
+        if (typeof renderHeatmap === "function") renderHeatmap();
+      }
+    });
+  }
+  document.getElementById("btn-reset").addEventListener("click", () => {
+    if (confirm("Wirklich allen Lernfortschritt löschen?")) {
+      state = defaultState();
+      saveState();
+      closeSettings();
+      renderHome();
+    }
+  });
+
+  // Service worker
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    });
+  }
+
+  // Init
+  renderHome();
+  </script>
+</body>
+</html>
