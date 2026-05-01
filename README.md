@@ -3,6 +3,7 @@
 **Englisch-Vokabeltrainer mit Karteibox und Leitner-System, CEFR-Niveau A1 bis C1.**
 
 [![Lizenz: CC BY-NC-SA 4.0](https://img.shields.io/badge/Lizenz-CC%20BY--NC--SA%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-goldenrod)](https://florianloyns.github.io/wortgold/)
 ![Keine Abhängigkeiten](https://img.shields.io/badge/Abh%C3%A4ngigkeiten-keine-brightgreen)
 ![PWA](https://img.shields.io/badge/PWA-offline--f%C3%A4hig-goldenrod)
 
